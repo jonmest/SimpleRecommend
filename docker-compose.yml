@@ -1,0 +1,21 @@
+version: '3'
+services: 
+    postgres-server:
+        image: postgres
+        env_file:
+            - database.env
+        volumes:
+            - postgres-server-data:/var/lib/postgresql/data/
+        ports:
+            - "5432:5432"
+    redis-server:
+        image: redis
+        ports:
+            - "6379:6379"
+
+    go-app:
+        build: ./go
+        ports:
+            - "8080:8080"
+volumes:
+    postgres-server-data:
