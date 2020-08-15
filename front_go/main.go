@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 
 	"github.com/gofiber/fiber"
@@ -8,6 +9,8 @@ import (
 	"raas.com/api/v1/controllers"
 	"raas.com/api/v1/models"
 )
+
+var ctx = context.Background()
 
 func main() {
 	app := fiber.New()

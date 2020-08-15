@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -10,8 +9,6 @@ import (
 
 	"github.com/gofiber/fiber"
 )
-
-var ctx = context.Background()
 
 func jsonEscape(i string) string {
 	b, err := json.Marshal(i)
@@ -34,7 +31,7 @@ func Recommendations(c *fiber.Ctx) {
 	}
 
 	// Check if cached in redis first
-	key := fmt.Sprintf("%v_%v", provider, actor)
+	key := fmt.Sprintf("recs_%v_%v", provider, actor)
 	rawString, err := models.RDB.Get(ctx, key).Result()
 	if err != nil {
 
@@ -47,7 +44,7 @@ func Recommendations(c *fiber.Ctx) {
 		}
 	}
 
-	if len(rawString) == 0 {
+	if rawString == "" {
 		c.Status(500).JSON(fiber.Map{"error": "No recommendations could be found."})
 		return
 	}
