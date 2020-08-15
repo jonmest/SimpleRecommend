@@ -8,6 +8,11 @@ import (
 	"raas.com/api/v1/models"
 )
 
+type Actor struct {
+	Id       string
+	Provider string
+}
+
 func generateRandomBytes(n int) ([]byte, error) {
 	b := make([]byte, n)
 	_, err := rand.Read(b)
@@ -41,6 +46,7 @@ func Token(c *fiber.Ctx) {
 		return
 	}
 
-	models.DB.Exec("INSERT INTO actors (token, provider) VALUES ($1, $2);", token, input.Provider)
+	var actor = Actor{Id: token, Provider: input.Provider}
+	models.DB.Create(&actor)
 	c.Status(200).JSON(fiber.Map{"token": token})
 }

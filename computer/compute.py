@@ -1,28 +1,39 @@
 import psycopg2
-from KNN import KNN_Engine
+import psycopg2.extras
+from KNN.KNN_Engine import KNN_Engine
+from util import convert_to_dict
+import json
 
 def compute (body, pool, redis):
     # Get actor and provider IDs from body
-    actor_id = body.actor
-    provider_id = body.provider
+    print("Initiate computation.")
+    actor_id = body["actor"]
+    provider_id = body["provider"]
 
-    pool.getconn()
-    cursor = pool.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
+    conn = pool.getconn()
+    cursor = conn.cursor()
+    
     # Fetch provider's items, actors
-    items = cursor.execute("SELECT id FROM items WHERE provider = %s", provider_id).fetchall()
-    actors = cursor.execute("SELECT id FROM actors WHERE provider = %s", provider_id).fetchall()
+    cursor.execute('SELECT id FROM items WHERE provider = %s', (provider_id,))
+    items = [r[0] for r in cursor.fetchall()]
+
+    cursor.execute('SELECT id FROM actors WHERE provider = %s', (provider_id,))
+    actors = [r[0] for r in cursor.fetchall()]
 
     # Then build events list from provider
-    events = cursor.execute("SELECT * FROM events WHERE provider = %s", provider_id).fetchall()
+    cursor.execute("SELECT * FROM events WHERE provider = %s", (provider_id,))
+    events = cursor.fetchall()
+    events = convert_to_dict(cursor.description, events)
 
     # Load model
     knn = KNN_Engine.from_events(
         actors, items, events,
         event_key_actor="actor", event_key_item="item"
-    ).calculate_neighbours()
+    )
+    knn.calculate_neighbours()
 
-    recommendations = knn.get_recommendations(actor_id)
+    recommendations = knn.get_recommendations(actor_id).tolist()
+    recommendation_string = json.dumps(recommendations)
 
     # Store recommendations in SQL
     cursor.execute("""
@@ -31,15 +42,15 @@ def compute (body, pool, redis):
         BEGIN
             IF EXISTS (SELECT * FROM recommendations WHERE actor = %s AND provider = %s) THEN
                 UPDATE recommendations
-                SET recommendations = %s
+                SET items = %s
                 WHERE actor = %s AND provider = %s;
             ELSE
-                INSERT INTO recommendations (provider, actor, recommendations)
-                VALUES (%s, %s, %s)
+                INSERT INTO recommendations (provider, actor, items)
+                VALUES (%s, %s, %s);
             END IF;
         END
         $do$
-    """, actor_id, provider_id, recommendations, actor_id, provider_id, provider_id, actor_id, recommendations)
+    """, (actor_id, provider_id, recommendation_string, actor_id, provider_id, provider_id, actor_id, recommendation_string))
     
     # Delete actor's old recommendations from redis
     redis.delete('recs_{}_{}'.format(provider_id, actor_id))

@@ -3,6 +3,8 @@ from  sklearn import neighbors
 
 class KNN:
     def __init__(self, items, actors, mdata):
+        if len(items) == 0:
+            raise Exception("No items provided. At least one is required.")
         self.items = items
         self.actors = actors
         self.mdata = mdata

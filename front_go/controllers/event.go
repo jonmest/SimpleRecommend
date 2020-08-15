@@ -33,13 +33,16 @@ func SaveEvent(c *fiber.Ctx) {
 		input.Data, input.Provider)
 
 	key := fmt.Sprintf("is_active_%v_%v", input.Provider, input.Actor)
+	fmt.Println("Made it this far.")
+
 	isRecentlyActive, err := models.RDB.Get(ctx, key).Result()
-	if err != nil {
+	if err != nil || isRecentlyActive == "true" {
 		models.RDB.Set(ctx, key, "true", 5*time.Minute)
 		// Compute new recommendations
 		task := &Task{Actor: input.Actor, Provider: input.Provider}
 		json_task, _ := json.Marshal(task)
-		models.RDB.Set(ctx, "compute_task_queue", string(json_task), 5*time.Minute)
+		models.RDB.RPush(ctx, "queue:compute", string(json_task))
+		fmt.Println("Stored in Redis.")
 	}
 
 	c.Status(200).JSON(fiber.Map{"data": "success"})

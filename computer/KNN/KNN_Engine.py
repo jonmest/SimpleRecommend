@@ -1,4 +1,4 @@
-from KNN import KNN
+from KNN.KNN import KNN
 import numpy as np
 
 class KNN_Engine(KNN):
@@ -10,8 +10,10 @@ class KNN_Engine(KNN):
     list_of_events, event_key_actor, event_key_item):
         mdata = np.zeros((len(actors), len(items)))
         for i in list_of_events:
-            actor_i = actors.index(i[event_key_actor])
-            item_i = items.index(i[event_key_item])
-            mdata[actor_i, item_i] = 1
+            try:
+                actor_i = actors.index(i[event_key_actor])
+                item_i = items.index(i[event_key_item])
+                mdata[actor_i, item_i] = 1
+            except: continue
         return KNN_Engine(items, actors, mdata)
 

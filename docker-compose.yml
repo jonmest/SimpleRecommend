@@ -12,7 +12,12 @@ services:
         image: redis
         ports:
             - "6379:6379"
-
+    computing-app:
+        tty: true
+        build: ./computer
+        restart: always
+        volumes:
+            - ./computer/src/app:/home/jon/Code/RAAS/computer
     go-app:
         build: ./front_go
         ports:
