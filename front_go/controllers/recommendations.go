@@ -38,7 +38,7 @@ func GetRecommendations(c *fiber.Ctx) {
 
 	if err != nil {
 		var recommendation models.Recommendation
-		db.DB.Table("recommendations").Where("actor = ? AND provider = ?", actor, provider).First(&recommendation)
+		db.DB.Where(&models.Actor{ID: actor, Provider: provider}).First(&recommendation)
 		// db.DB.Raw("SELECT items FROM recommendations WHERE actor = ($1) AND provider = ($2);",
 		// 	actor, provider).Row().Scan(&rawString)
 

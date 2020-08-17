@@ -31,18 +31,14 @@ func SaveEvent(c *fiber.Ctx) {
 		return
 	}
 
-	db.DB.Table("events").Create(&models.Event{
+	event := models.Event{
 		Type:     input.Type,
 		Actor:    input.Actor,
 		Item:     input.Item,
 		Data:     input.Data,
-		Provider: input.Provider})
+		Provider: input.Provider}
 
-	// models.DB.Exec(
-	// 	`INSERT INTO events (type, actor, item, data, provider)
-	// 	VALUES ($1, $2, $3, $4, $5);`,
-	// 	input.Type, input.Actor, input.Item,
-	// 	input.Data, input.Provider)
+	db.DB.Create(&event)
 
 	key := fmt.Sprintf("is_active:%v_%v", input.Provider, input.Actor)
 
