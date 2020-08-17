@@ -5,13 +5,9 @@ import (
 	"encoding/base64"
 
 	"github.com/gofiber/fiber"
+	"raas.com/api/v1/db"
 	"raas.com/api/v1/models"
 )
-
-type Actor struct {
-	Id       string
-	Provider string
-}
 
 func generateRandomBytes(n int) ([]byte, error) {
 	b := make([]byte, n)
@@ -46,7 +42,7 @@ func Token(c *fiber.Ctx) {
 		return
 	}
 
-	var actor = Actor{Id: token, Provider: input.Provider}
-	models.DB.Create(&actor)
+	actor := models.Actor{ID: token, Provider: input.Provider}
+	db.DB.Create(&actor)
 	c.Status(200).JSON(fiber.Map{"token": token})
 }

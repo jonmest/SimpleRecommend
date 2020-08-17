@@ -7,6 +7,7 @@ import json
 import logging
 from compute import compute
 from datetime import datetime
+import multiprocessing as mp
 
 # logging.basicConfig(filename='app.log', filemode='a', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s [in %(pathname)s:%(lineno)d]')
@@ -23,29 +24,36 @@ POSTGRES_DB = os.getenv("POSTGRES_DB")
 REDIS_HOST = os.getenv("REDIS_HOST")
 REDIS_PORT = os.getenv("REDIS_PORT")
 
-try:
-    postgreSQL_pool = psycopg2.pool.SimpleConnectionPool(1, 20,
+TASK_LIST_KEY = "queue:compute"
+
+def start_compute(task):
+    try:
+        fork_pool = psycopg2.pool.SimpleConnectionPool(1, 5,
                             user=POSTGRES_USER,
                             password = POSTGRES_PASSWORD,
                             host=POSTGRES_HOST,
                             port=PASSWORD_PORT,
                             database=POSTGRES_DB)
-except:
-    logging.error("Failed to connect with Postgres.")
+        fork_r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+        compute(json.loads(task), fork_pool, fork_r)
+        logging.info("Successfully computed task: {}".format(datetime.now().strftime("%H:%M:%S")))
+    except Exception as e:
+        logging.error(task)
+        logging.error(e)
 
-TASK_LIST_KEY = "queue:compute"
+def main():
+    pool = mp.Pool()
+    try:
+        r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+    except:
+        logging.error("Failed to connect with Redis.")
 
-try:
-    r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-except:
-    logging.error("Failed to connect with Redis.")
+    while True:
+        print("Working...")
+        task = r.blpop(TASK_LIST_KEY)[1]
+        task = task.decode("utf-8")
+        if not task: continue
+        pool.map(start_compute, (task,))
 
-run = True
-
-while run:
-    print("Working...")
-    task = r.blpop(TASK_LIST_KEY)[1]
-    task = task.decode("utf-8")
-    if not task: continue
-    compute(json.loads(task), postgreSQL_pool, r)
-    logging.info("Successfully computed task: {}".format(datetime.now().strftime("%H:%M:%S")))
+if __name__ == '__main__':
+    main()

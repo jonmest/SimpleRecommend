@@ -12,7 +12,7 @@ class KNN:
         self.indices = None
     
     def calculate_neighbours(self, k=3):
-        model_knn = neighbors.NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=k, n_jobs=-1).fit(self.mdata)
+        model_knn = neighbors.NearestNeighbors(metric='cosine', algorithm='auto', n_neighbors=k).fit(self.mdata)
         self.distances, self.indices = model_knn.kneighbors(self.mdata)
     
     def get_neighbours(self, actor):

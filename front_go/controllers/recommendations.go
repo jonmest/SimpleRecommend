@@ -7,6 +7,8 @@ import (
 
 	"raas.com/api/v1/models"
 
+	"raas.com/api/v1/db"
+
 	"github.com/gofiber/fiber"
 )
 
@@ -19,36 +21,48 @@ func jsonEscape(i string) string {
 	return s[1 : len(s)-1]
 }
 
-func Recommendations(c *fiber.Ctx) {
+func GetRecommendations(c *fiber.Ctx) {
 	provider := c.Query("provider")
 	actor := c.Query("actor")
 	var items []string
 	var rawString string
-	fmt.Println(provider)
+
 	if provider == "" || actor == "" {
 		c.Status(500).JSON(fiber.Map{"error": "Must supply provider and actor query parameters."})
 		return
 	}
 
 	// Check if cached in redis first
-	key := fmt.Sprintf("recs_%v_%v", provider, actor)
-	rawString, err := models.RDB.Get(ctx, key).Result()
+	key := fmt.Sprintf("recs:%v_%v", provider, actor)
+	redisString, err := db.RDB.Get(ctx, key).Result()
+
 	if err != nil {
+		var recommendation models.Recommendation
+		db.DB.Table("recommendations").Where("actor = ? AND provider = ?", actor, provider).First(&recommendation)
+		// db.DB.Raw("SELECT items FROM recommendations WHERE actor = ($1) AND provider = ($2);",
+		// 	actor, provider).Row().Scan(&rawString)
 
-		models.DB.Raw("SELECT items FROM recommendations WHERE actor = ($1) AND provider = ($2);",
-			actor, provider).Row().Scan(&rawString)
-
-		err := models.RDB.Set(ctx, fmt.Sprintf("%v_%v", provider, actor), rawString, 30*time.Minute).Err()
+		// Cache in redis
+		err := db.RDB.Set(ctx, fmt.Sprintf("recs:%v_%v", provider, actor), rawString, 20*time.Minute).Err()
 		if err != nil {
-			panic(err)
+			// Log something
 		}
+
+		if len(recommendation.Items) == 0 {
+			c.Status(500).JSON(fiber.Map{"error": "No recommendations could be found."})
+			return
+		}
+
+		json.Unmarshal([]byte(rawString), &recommendation.Items)
+		c.Status(200).JSON(fiber.Map{"items": items})
+		return
 	}
 
-	if rawString == "" {
+	if redisString == "" {
 		c.Status(500).JSON(fiber.Map{"error": "No recommendations could be found."})
 		return
 	}
 
-	json.Unmarshal([]byte(rawString), &items)
-	c.Status(200).JSON(fiber.Map{"key": items})
+	json.Unmarshal([]byte(redisString), &items)
+	c.Status(200).JSON(fiber.Map{"items": items})
 }

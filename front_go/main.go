@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber"
 	"github.com/gofiber/fiber/middleware"
 	"raas.com/api/v1/controllers"
-	"raas.com/api/v1/models"
+	"raas.com/api/v1/db"
 )
 
 var ctx = context.Background()
@@ -19,10 +19,10 @@ func main() {
 		Output:     os.Stdout,
 	}))
 
-	models.ConnectDatabase()
+	db.ConnectDatabase()
 
 	app.Post("/token", controllers.Token)
 	app.Post("/event", controllers.SaveEvent)
-	app.Get("/recommendations", controllers.Recommendations)
+	app.Get("/recommendations", controllers.GetRecommendations)
 	app.Listen(8080)
 }

@@ -1,9 +1,10 @@
-package models
+package db
 
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"raas.com/api/v1/models"
 )
 
 var DB *gorm.DB
@@ -17,7 +18,15 @@ func ConnectDatabase() {
 		panic(err)
 	}
 
-	database.AutoMigrate(&Event{})
+	if !database.HasTable("actors") {
+		database.CreateTable(&models.Actor{})
+	}
+	if !database.HasTable("events") {
+		database.CreateTable(&models.Event{})
+	}
+	if !database.HasTable("recommendations") {
+		database.CreateTable(&models.Recommendation{})
+	}
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "redis-server:6379",
