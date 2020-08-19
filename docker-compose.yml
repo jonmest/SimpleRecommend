@@ -22,5 +22,9 @@ services:
         build: ./front_go
         ports:
             - "8080:8080"
+    provider-app:
+        build: ./provider_area
+        ports:
+            - "8081:8080"
 volumes:
     postgres-server-data:

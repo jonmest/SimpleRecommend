@@ -1,11 +1,9 @@
-FROM python:3.7
+FROM golang:1.14
 
-WORKDIR /computer/src/app
-
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
+WORKDIR /go/src/app
 COPY . .
-ENV PYTHONUNBUFFERED=0
 
-CMD ["python", "./manage.py", "runserver"]
+RUN go get -d -v ./...
+RUN go install -v ./...
+
+CMD ["go", "run", "main.go"]
