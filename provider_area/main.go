@@ -38,6 +38,7 @@ func main() {
 	items := account.Group("/items")
 	items.Post("/:id", mymw.Protected(), controllers.PostItems)
 	items.Get("/:id", mymw.Protected(), controllers.GetItems)
+	items.Patch("/:id", mymw.Protected(), controllers.UpdateItems)
 	items.Delete("/:id", mymw.Protected(), controllers.DeleteItems)
 
 	app.Listen(8080)

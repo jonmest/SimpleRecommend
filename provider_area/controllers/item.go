@@ -56,6 +56,35 @@ func PostItems(c *fiber.Ctx) {
 	c.JSON(fiber.Map{"status": "success", "message": "Items from account successfully created.", "data": nil})
 }
 
+func UpdateItems(c *fiber.Ctx) {
+	type UpdateItemInput struct {
+		Items []models.Item `json:"items"`
+	}
+	var uii UpdateItemInput
+	if err := c.BodyParser(&uii); err != nil {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
+		return
+	}
+	id := c.Params("id")
+	token := c.Locals("user").(*jwt.Token)
+
+	if !validToken(token, id) {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
+		return
+	}
+
+	db := db.DB
+
+	for _, val := range uii.Items {
+		var item models.Item
+		db.First(&item, val.Iid)
+		item.Category = val.Category
+		db.Save(&item)
+	}
+
+	c.JSON(fiber.Map{"status": "success", "message": "Items successfully updated", "data": nil})
+}
+
 func DeleteItems(c *fiber.Ctx) {
 	type DeleteInput struct {
 		ItemIids []string `json:"items"`
