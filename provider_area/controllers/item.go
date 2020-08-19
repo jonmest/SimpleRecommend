@@ -77,9 +77,7 @@ func UpdateItems(c *fiber.Ctx) {
 
 	for _, val := range uii.Items {
 		var item models.Item
-		db.First(&item, val.Iid)
-		item.Category = val.Category
-		db.Save(&item)
+		db.Model(&item).Where("iid = ?", val.Iid).Update("category", val.Category)
 	}
 
 	c.JSON(fiber.Map{"status": "success", "message": "Items successfully updated", "data": nil})
