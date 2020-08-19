@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"os"
 
 	"provider-area/controllers"
 	"provider-area/db"
@@ -11,7 +10,6 @@ import (
 
 	"github.com/gofiber/cors"
 	"github.com/gofiber/fiber"
-	"github.com/gofiber/fiber/middleware"
 )
 
 var ctx = context.Background()
@@ -19,10 +17,10 @@ var ctx = context.Background()
 func main() {
 	app := fiber.New()
 	app.Use(cors.New())
-	app.Use(middleware.Logger(middleware.LoggerConfig{
-		TimeFormat: "15:04:05",
-		Output:     os.Stdout,
-	}))
+	// app.Use(middleware.Logger(middleware.LoggerConfig{
+	// 	TimeFormat: "15:04:05",
+	// 	Output:     os.Stdout,
+	// }))
 
 	db.ConnectDatabase()
 
