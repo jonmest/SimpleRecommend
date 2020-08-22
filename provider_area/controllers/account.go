@@ -69,7 +69,7 @@ func GetUser(c *fiber.Ctx) {
 	c.JSON(fiber.Map{"status": "success", "message": "User found", "data": user})
 }
 
-func CreateAccount(c *fiber.Ctx) {
+func CreateAccountAndCustomer(c *fiber.Ctx) {
 	type NewAccount struct {
 		Username string `json:"username"`
 		Email    string `json:"email"`
