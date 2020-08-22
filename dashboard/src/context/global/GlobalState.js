@@ -15,10 +15,13 @@ const GlobalState = props => {
             currentStep: 1,
             username: "",
             email: "",
-            password: "",
-            plan: ""
+            password1: "",
+            password2: "",
+            plan: "",
+            priceId: ""
         }
     }
+
 
     const [state, dispatch] = useReducer(GlobalReducer, initialState)
 

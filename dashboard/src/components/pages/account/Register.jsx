@@ -6,22 +6,30 @@ const Register = ({state, callback, parentStateModifier}) => {
     * State
     */
     const globalState = useContext(GlobalContext)
+    const { username, email, password1, password2 } = globalState.signupProcess
 
     useEffect(() => {
       globalState.setSignupProcess({
+        ...globalState.signupProcess,
         currentStep: 1
       })
     }, [])
+
+    const handleInput = e => {
+      const tmp = globalState.signupProcess
+      tmp[e.target.id] = e.target.value
+      globalState.setSignupProcess(tmp)
+    }
     
-    const [email, setEmail] = useState('')
-    const [username, setUsername] = useState('')
-    const [password1, setPassword1] = useState('')
-    const [password2, setPassword2] = useState('')
+    // const [email, setEmail] = useState('')
+    // const [username, setUsername] = useState('')
+    // const [password1, setPassword1] = useState('')
+    // const [password2, setPassword2] = useState('')
   
-    const changeEmail = (event) => setEmail(event.target.value)
-    const changeUsername = (event) => setUsername(event.target.value)
-    const changePassword1 = (event) => setPassword1(event.target.value)
-    const changePassword2 = (event) => setPassword2(event.target.value)
+    // const changeEmail = (event) => setEmail(event.target.value)
+    // const changeUsername = (event) => setUsername(event.target.value)
+    // const changePassword1 = (event) => setPassword1(event.target.value)
+    // const changePassword2 = (event) => setPassword2(event.target.value)
     
     const submit = () => {
       if (password1.length != "" &&
@@ -33,40 +41,54 @@ const Register = ({state, callback, parentStateModifier}) => {
           password: password1,
           username,
           email
-        })
+      })
       }
     }
 
     return (
       <Fragment>
-        <div class="container mt-5">
 
-<div className="signup-form">
-		<h2>Register</h2>
-		<p className="hint-text">Create your account. It's free and only takes a minute.</p>
-        <div className="form-group">
-			<div className="row">
-				<div className="col"><input type="text" onChange={changeUsername} className="form-control" name="first_name" placeholder="Username" required="required"/></div>
-			</div>        	
-        </div>
-        <div className="form-group">
-        	<input type="email" className="form-control" onChange={changeEmail} name="email" placeholder="Email" required="required"/>
-        </div>
-		<div className="form-group">
-            <input type="password" className="form-control" onChange={changePassword1} name="password" placeholder="Password" required="required"/>
-        </div>
-		<div className="form-group">
-            <input type="password" className="form-control" onChange={changePassword2} name="confirm_password" placeholder="Confirm Password" required="required"/>
-        </div>        
-        <div className="form-group">
-			<label className="form-check-label"><input type="checkbox" required="required"/> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a></label>
-		</div>
-		<div className="form-group">
-            <button type="submit" onClick={submit} className="btn btn-success btn-lg btn-block">Register Now</button>
-        </div>
-	<div className="text-center">Already have an account? <a href="#">Sign in</a></div>
-</div>
-</div>
+	
+    <div class="columns">
+      <div class="column"></div>
+      <div class="column is-half">
+      <span className="title">Register</span>
+		<p>Create your account. It's free and only takes a minute.</p>
+    <hr/>
+              <div class="field">
+              <label class="label">Username</label>
+              <div class="control">
+                <input class="input" id="username" value={username} onChange={handleInput} type="text" placeholder="Username" required="required"/>
+              </div>
+            </div>
+            <div class="field">
+            <div className="control">
+              <label class="label">Email</label>
+              <input type="email" id="email" class="input" value={email} onChange={handleInput} name="email" placeholder="Email" required="required"/>
+            </div>
+            </div>
+            <div class="field">
+            <div className="control">
+              <label class="label">Password</label>
+              <input type="password" id="password1" className="input" value={password1} onChange={handleInput} name="password1" placeholder="Password" required="required"/>
+            </div>
+            </div>
+            <div class="field">
+            <div className="control">
+              <label class="label">Confirm password</label>
+              <input type="password" id="password2" className="input" value={password2} onChange={handleInput} name="password2" placeholder="Confirm password" required="required"/>
+            </div>
+            </div>
+            <div class="field">
+            <div className="control">
+              <button class="button is-danger" onClick={submit}>Register Now</button>
+            </div>
+            </div>
+      </div>
+      <div class="column"></div>
+
+    </div>
+    
       </Fragment>
     )
   }      

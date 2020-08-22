@@ -13,6 +13,7 @@ import {
 const SignUpWizard = () => {
   const globalState = useContext(GlobalContext)
   const { currentStep } = globalState.signupProcess
+  const { setSignupProcess } = globalState
 
   const getStep = () => {
     switch (currentStep){
@@ -27,10 +28,25 @@ const SignUpWizard = () => {
     }
   }
 
+const goBack = () => {
+  const previousStep = currentStep - 1
+  setSignupProcess({...globalState.signupProcess, currentStep: previousStep})
+}
+
+const backButton = () => {
+  if (currentStep > 1) {
+    return <button onClick={goBack} className="button">← Previous</button>
+  }
+}
+
   return (
-  <div class="container">
-    {getStep()}
-  </div>
+    <section class = "section">
+    <div class = "container">
+    {backButton()}
+    <br/>
+      {getStep()}
+    </div>
+    </section>
   )
 }
 
