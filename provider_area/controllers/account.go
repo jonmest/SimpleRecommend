@@ -1,53 +1,13 @@
 package controllers
 
 import (
-	"fmt"
 	"provider-area/db"
 	"provider-area/models"
 	"provider-area/models/forms"
-	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber"
-	"golang.org/x/crypto/bcrypt"
 )
-
-const MIN_PWD_LEN int = 7
-
-func hashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	return string(bytes), err
-}
-
-func validToken(t *jwt.Token, id string) bool {
-	n, err := strconv.Atoi(id)
-	if err != nil {
-		return false
-	}
-
-	claims := t.Claims.(jwt.MapClaims)
-	uid := int(claims["user_id"].(float64))
-
-	if uid != n {
-		return false
-	}
-
-	return true
-}
-
-func validUser(id string, p string) bool {
-	db := db.DB
-	var user models.Provider
-	db.First(&user, id)
-	fmt.Printf("%+v\n", user)
-	// if user.ID == "" {
-	// 	return false
-	// }
-	if !CheckPasswordHash(p, user.PasswordHash) {
-		return false
-	}
-	return true
-}
 
 func GetUser(c *fiber.Ctx) {
 	id := c.Params("id")
