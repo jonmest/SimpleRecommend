@@ -3,17 +3,16 @@ package controllers
 import (
 	"provider-area/db"
 	"provider-area/models"
+	util "provider-area/utils"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber"
 )
 
-// DeleteUser delete user
 func GetItems(c *fiber.Ctx) {
 	id := c.Params("id")
 	token := c.Locals("user").(*jwt.Token)
-
-	if !validToken(token, id) {
+	if !util.ValidToken(token, id) {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
 		return
 	}
@@ -31,15 +30,15 @@ func PostItems(c *fiber.Ctx) {
 	type ItemsInput struct {
 		Items []models.Item `json:"items"`
 	}
-	var it ItemsInput
-	if err := c.BodyParser(&it); err != nil {
+	var input ItemsInput
+	if err := c.BodyParser(&input); err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
 		return
 	}
+
 	id := c.Params("id")
 	token := c.Locals("user").(*jwt.Token)
-
-	if !validToken(token, id) {
+	if !util.ValidToken(token, id) {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
 		return
 	}
@@ -48,7 +47,7 @@ func PostItems(c *fiber.Ctx) {
 	var user models.Provider
 	db.First(&user, id)
 
-	for _, value := range it.Items {
+	for _, value := range input.Items {
 		value.Provider = user.Username
 		db.Create(&value)
 	}
@@ -60,22 +59,21 @@ func UpdateItems(c *fiber.Ctx) {
 	type UpdateItemInput struct {
 		Items []models.Item `json:"items"`
 	}
-	var uii UpdateItemInput
-	if err := c.BodyParser(&uii); err != nil {
+	var input UpdateItemInput
+	if err := c.BodyParser(&input); err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
 		return
 	}
+
 	id := c.Params("id")
 	token := c.Locals("user").(*jwt.Token)
-
-	if !validToken(token, id) {
+	if !util.ValidToken(token, id) {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
 		return
 	}
 
 	db := db.DB
-
-	for _, val := range uii.Items {
+	for _, val := range input.Items {
 		var item models.Item
 		db.Model(&item).Where("iid = ?", val.Iid).Update("category", val.Category)
 	}
@@ -87,23 +85,23 @@ func DeleteItems(c *fiber.Ctx) {
 	type DeleteInput struct {
 		ItemIids []string `json:"items"`
 	}
-
-	var di DeleteInput
-	if err := c.BodyParser(&di); err != nil {
+	var input DeleteInput
+	if err := c.BodyParser(&input); err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
 		return
 	}
+
 	id := c.Params("id")
 	token := c.Locals("user").(*jwt.Token)
-
-	if !validToken(token, id) {
+	if !util.ValidToken(token, id) {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
 		return
 	}
 
-	for _, value := range di.ItemIids {
+	for _, value := range input.ItemIids {
 		db.DB.Where("iid = ?", value).Delete(&models.Item{})
 	}
+
 	c.JSON(fiber.Map{"status": "success", "message": "Items from with specified IDs successfully deleted.", "data": nil})
 
 }

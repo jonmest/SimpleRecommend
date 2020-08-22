@@ -1,0 +1,1 @@
+export const SET_SIGNUP_STATE = 'SET_SIGNUP_STATE'

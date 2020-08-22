@@ -2,7 +2,11 @@ package controllers
 
 import (
 	"os"
+	"provider-area/db"
+	"provider-area/models"
+	util "provider-area/utils"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber"
 	"github.com/stripe/stripe-go/v71"
 	"github.com/stripe/stripe-go/v71/customer"
@@ -10,42 +14,25 @@ import (
 	"github.com/stripe/stripe-go/v71/sub"
 )
 
-func HandleCreateCustomer(c *fiber.Ctx) {
-	var req struct {
-		Email string `json:"email"`
-	}
-
-	if err := c.BodyParser(&req); err != nil {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review input", "data": err})
-		return
-	}
-	params := &stripe.CustomerParams{
-		Email: stripe.String(req.Email),
-	}
-
-	cus, err := customer.New(params)
-	if err != nil {
-		c.Status(500)
-		return
-	}
-	c.Status(200).JSON(fiber.Map{
-		"status": "success",
-		"data": struct {
-			Customer *stripe.Customer `json:"customer"`
-		}{
-			Customer: cus,
-		}})
-}
-
 func HandleCreateSubscription(c *fiber.Ctx) {
 	var req struct {
 		PaymentMethodID string `json:"paymentMethodId"`
-		CustomerID      string `json:"customerId"`
 		PriceID         string `json:"priceId"`
 	}
 
-	if c.Method() != "POST" {
-		c.Status(500)
+	id := c.Params("id")
+	token := c.Locals("user").(*jwt.Token)
+	db := db.DB
+
+	if !util.ValidToken(token, id) {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
+		return
+	}
+
+	var user models.Provider
+	db.Find(&user, id)
+	if user.Username == "" {
+		c.Status(404).JSON(fiber.Map{"status": "error", "message": "No user found with ID", "data": nil})
 		return
 	}
 
@@ -55,7 +42,7 @@ func HandleCreateSubscription(c *fiber.Ctx) {
 	}
 
 	params := &stripe.PaymentMethodAttachParams{
-		Customer: stripe.String(req.CustomerID),
+		Customer: stripe.String(user.StripeCustomerId),
 	}
 	pm, err := paymentmethod.Attach(
 		req.PaymentMethodID,
@@ -72,7 +59,7 @@ func HandleCreateSubscription(c *fiber.Ctx) {
 		},
 	}
 	_, err = customer.Update(
-		req.CustomerID,
+		user.StripeCustomerId,
 		customerParams,
 	)
 	if err != nil {
@@ -81,7 +68,7 @@ func HandleCreateSubscription(c *fiber.Ctx) {
 	}
 	// Create subscription
 	subscriptionParams := &stripe.SubscriptionParams{
-		Customer: stripe.String(req.CustomerID),
+		Customer: stripe.String(user.StripeCustomerId),
 		Items: []*stripe.SubscriptionItemsParams{
 			{
 				Plan: stripe.String(os.Getenv(req.PriceID)),
@@ -92,9 +79,8 @@ func HandleCreateSubscription(c *fiber.Ctx) {
 	s, err := sub.New(subscriptionParams)
 	if err != nil {
 		c.Status(500)
-
 		return
 	}
-	c.Status(200).JSON(fiber.Map{"status": "success", "subscription": s})
 
+	c.Status(200).JSON(fiber.Map{"status": "success", "subscription": s})
 }

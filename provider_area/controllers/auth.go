@@ -17,7 +17,6 @@ func Login(c *fiber.Ctx) {
 		Password string `json:"password"`
 	}
 	var input LoginInput
-	// Output
 	type UserData struct {
 		ID       uint   `json:"id"`
 		Username string `json:"username"`
@@ -46,7 +45,7 @@ func Login(c *fiber.Ctx) {
 
 	var user *models.Provider
 	if email == nil {
-		user, err := util.GetUserByUsername(identity)
+		user, err = util.GetUserByUsername(identity)
 		if err != nil {
 			c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Error on username", "data": err})
 			return
