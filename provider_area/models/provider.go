@@ -11,4 +11,5 @@ type Provider struct {
 	TypeOfUserData   string `gorm:"type:text"`
 	Active           bool   `gorm:"type:boolean"`
 	StripeCustomerId string `gorm:"type:text" json:"-"`
+	SubscriptionID   string `gorm:"type:text" json:"-"`
 }

@@ -13,7 +13,6 @@ services:
         ports:
             - "6379:6379"
     computing-app:
-        tty: true
         build: ./computer
         restart: always
         volumes:
@@ -26,5 +25,13 @@ services:
         build: ./provider_area
         ports:
             - "8081:8080"
+    dashboard:
+        build: ./dashboard
+        ports:
+            - 3001:3000
+        stdin_open: true # docker run -i
+        tty: true        # docker run -t
+        environment:
+            - CHOKIDAR_USEPOLLING=true
 volumes:
     postgres-server-data:

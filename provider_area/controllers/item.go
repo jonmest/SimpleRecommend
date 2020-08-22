@@ -5,17 +5,11 @@ import (
 	"provider-area/models"
 	util "provider-area/utils"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber"
 )
 
 func GetItems(c *fiber.Ctx) {
-	id := c.Params("id")
-	token := c.Locals("user").(*jwt.Token)
-	if !util.ValidToken(token, id) {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
-		return
-	}
+	id := util.GetUserIdFromToken(c)
 
 	db := db.DB
 	var user models.Provider
@@ -36,12 +30,7 @@ func PostItems(c *fiber.Ctx) {
 		return
 	}
 
-	id := c.Params("id")
-	token := c.Locals("user").(*jwt.Token)
-	if !util.ValidToken(token, id) {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
-		return
-	}
+	id := util.GetUserIdFromToken(c)
 
 	db := db.DB
 	var user models.Provider
@@ -65,17 +54,15 @@ func UpdateItems(c *fiber.Ctx) {
 		return
 	}
 
-	id := c.Params("id")
-	token := c.Locals("user").(*jwt.Token)
-	if !util.ValidToken(token, id) {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
-		return
-	}
+	id := util.GetUserIdFromToken(c)
 
 	db := db.DB
+	var user models.Provider
+	db.First(&user, id)
+
 	for _, val := range input.Items {
 		var item models.Item
-		db.Model(&item).Where("iid = ?", val.Iid).Update("category", val.Category)
+		db.Model(&item).Where("iid = ? AND provider = ?", val.Iid, user.Username).Update("category", val.Category)
 	}
 
 	c.JSON(fiber.Map{"status": "success", "message": "Items successfully updated", "data": nil})
@@ -91,15 +78,14 @@ func DeleteItems(c *fiber.Ctx) {
 		return
 	}
 
-	id := c.Params("id")
-	token := c.Locals("user").(*jwt.Token)
-	if !util.ValidToken(token, id) {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
-		return
-	}
+	id := util.GetUserIdFromToken(c)
+
+	db := db.DB
+	var user models.Provider
+	db.First(&user, id)
 
 	for _, value := range input.ItemIids {
-		db.DB.Where("iid = ?", value).Delete(&models.Item{})
+		db.Where("iid = ? AND provider = ?", value, user.Username).Delete(&models.Item{})
 	}
 
 	c.JSON(fiber.Map{"status": "success", "message": "Items from with specified IDs successfully deleted.", "data": nil})

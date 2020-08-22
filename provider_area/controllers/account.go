@@ -11,6 +11,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber"
+	"github.com/jinzhu/gorm"
 	"github.com/stripe/stripe-go/v71"
 	"github.com/stripe/stripe-go/v71/customer"
 )
@@ -18,14 +19,8 @@ import (
 const MIN_PWD_LEN int = 7
 
 func GetUser(c *fiber.Ctx) {
-	id := c.Params("id")
-	token := c.Locals("user").(*jwt.Token)
+	id := util.GetUserIdFromToken(c)
 	db := db.DB
-
-	if !util.ValidToken(token, id) {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
-		return
-	}
 
 	var user models.Provider
 	db.Find(&user, id)
@@ -40,6 +35,7 @@ func GetUser(c *fiber.Ctx) {
 func CreateAccountAndCustomer(c *fiber.Ctx) {
 	// To return in response
 	type NewAccount struct {
+		ID       uint             `json:"id"`
 		Username string           `json:"username"`
 		Email    string           `json:"email"`
 		Token    string           `json:"token"`
@@ -111,12 +107,23 @@ func CreateAccountAndCustomer(c *fiber.Ctx) {
 		return
 	}
 
+	var u models.Provider
+	if err := db.Where(&models.Provider{Username: account.Username}).Find(&u).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			c.Status(500)
+			return
+		}
+		c.Status(500)
+		return
+	}
+
 	// Return just email, username, stripe customer and new JWT token in response
 	newAccount := NewAccount{
 		Email:    input.Email,
 		Username: input.Username,
 		Token:    t,
 		Customer: cus,
+		ID:       u.ID,
 	}
 
 	c.JSON(fiber.Map{"status": "success", "message": "Created user", "data": newAccount})
@@ -132,12 +139,7 @@ func UpdateUser(c *fiber.Ctx) {
 		return
 	}
 
-	id := c.Params("id")
-	token := c.Locals("user").(*jwt.Token)
-	if !util.ValidToken(token, id) {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
-		return
-	}
+	id := util.GetUserIdFromToken(c)
 
 	db := db.DB
 	var user models.Provider
@@ -160,12 +162,8 @@ func DeleteAccount(c *fiber.Ctx) {
 		return
 	}
 
-	id := c.Params("id")
-	token := c.Locals("user").(*jwt.Token)
-	if !util.ValidToken(token, id) {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token id", "data": nil})
-		return
-	}
+	id := util.GetUserIdFromToken(c)
+
 	if !util.ValidUser(id, input.Password) {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Not valid user", "data": nil})
 		return

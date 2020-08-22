@@ -4,9 +4,18 @@ import (
 	"provider-area/db"
 	"provider-area/models"
 
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gofiber/fiber"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func GetUserIdFromToken(c *fiber.Ctx) string {
+	token := c.Locals("user").(*jwt.Token)
+	claims := token.Claims.(jwt.MapClaims)
+	id := claims["user_id"].(string)
+	return id
+}
 
 // CheckPasswordHash compare password with hash
 func CheckPasswordHash(password, hash string) bool {

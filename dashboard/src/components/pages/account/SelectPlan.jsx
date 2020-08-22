@@ -3,7 +3,7 @@ import GlobalContext from '../../../context/global/GlobalContext'
 
 const planToPriceID = {
   "value": "price_1HIgYpCAPJL19xqxpRDwnvab",
-  "heavy": "price_1HIgYECAPJL19xqxRjUoDS68"
+  "heavy": "price_1HJ49yCAPJL19xqxrFJZjq40"
 }
 
 const SelectPlan = () => {
