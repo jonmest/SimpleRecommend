@@ -1,1 +1,2 @@
 export const SET_SIGNUP_STATE = 'SET_SIGNUP_STATE'
+export const SET_CLIENT_STATE = 'SET_CLIENT_STATE'

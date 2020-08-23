@@ -2,7 +2,8 @@ import React, { useReducer } from 'react'
 import GlobalContext from './GlobalContext'
 import GlobalReducer from './GlobalReducer'
 import {
-    SET_SIGNUP_STATE
+    SET_SIGNUP_STATE,
+    SET_CLIENT_STATE
 } from '../types'
 
 const GlobalState = props => {
@@ -11,19 +12,18 @@ const GlobalState = props => {
         isAuthenticated: false,
         client: null,
         bearToken: null,
-        signupProcess: {
-            currentStep: 1,
-            username: "",
-            email: "",
-            password1: "",
-            password2: "",
-            plan: "",
-            priceId: ""
-        }
+        signupProcess: null
     }
 
 
     const [state, dispatch] = useReducer(GlobalReducer, initialState)
+
+    const setClient = state => {
+        dispatch({
+            type: SET_CLIENT_STATE,
+            payload: state
+        })
+    }
 
     const setSignupProcess = state => {
         dispatch({
@@ -38,7 +38,9 @@ const GlobalState = props => {
         signupProcess: state.signupProcess,
         bearToken: state.bearToken,
         isAuthenticated: state.isAuthenticated,
-        setSignupProcess
+        client: state.client,
+        setSignupProcess,
+        setClient
 
     }}>
 

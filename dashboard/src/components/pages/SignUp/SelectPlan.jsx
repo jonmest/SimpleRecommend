@@ -1,6 +1,8 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
 import GlobalContext from '../../../context/global/GlobalContext'
+import Cookies from 'js-cookie'
 
+console.log(Cookies)
 const planToPriceID = {
   "value": "price_1HIgYpCAPJL19xqxpRDwnvab",
   "heavy": "price_1HJ49yCAPJL19xqxrFJZjq40"
@@ -32,10 +34,26 @@ const SelectPlan = () => {
     }, [])
 
     const submit = () => {
-      globalState.setSignupProcess({
-        ...globalState.signupProcess,
-        currentStep: 3
-      })
+
+      fetch(process.env.REACT_APP_PROVIDER_API_URL + '/account/session', {
+        method: 'post', mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + Cookies.get('token')
+        },
+        body: JSON.stringify({
+          priceId: globalState.signupProcess.priceId
+        })})
+        .then(res => res.json())
+        .then(data => data.data)
+        .then(data => globalState.setSignupProcess({
+          ...globalState.signupProcess,
+          sessionId: data.id,
+          currentStep: 3
+        }))
+        .catch(e => {
+          console.log("[SESSION CREATION]: ", e)
+        })
     }
 
     return (

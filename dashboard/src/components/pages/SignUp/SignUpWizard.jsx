@@ -15,6 +15,20 @@ const SignUpWizard = () => {
   const { currentStep } = globalState.signupProcess
   const { setSignupProcess } = globalState
 
+  useEffect(() => {
+    globalState.setSignupProcess({
+      currentStep: 1,
+      username: "",
+      email: "",
+      password1: "",
+      password2: "",
+      plan: "",
+      priceId: "",
+      sessionId: ""
+  })
+  }, [])
+
+
   const getStep = () => {
     switch (currentStep){
       case 1:

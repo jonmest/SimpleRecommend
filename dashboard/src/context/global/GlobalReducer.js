@@ -1,5 +1,6 @@
 import {
-    SET_SIGNUP_STATE
+    SET_SIGNUP_STATE,
+    SET_CLIENT_STATE
 } from '../types'
 
 export default (state, action) => {
@@ -10,6 +11,15 @@ export default (state, action) => {
                 signupProcess: {
                     ...state.signupProcess,
                     ...action.payload
+                }
+            }
+        case SET_CLIENT_STATE:
+            return {
+                ...state,
+                client: {
+                    username: action.payload.username,
+                    id: action.payload.id,
+                    email: action.payload.email
                 }
             }
         default:

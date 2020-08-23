@@ -1,12 +1,12 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
 import GlobalContext from '../../../context/global/GlobalContext'
+import { useCookies } from 'react-cookie'
 
-const Register = ({state, callback, parentStateModifier}) => {
-    /*
-    * State
-    */
+const Register = ({state}) => {
     const globalState = useContext(GlobalContext)
     const { username, email, password1, password2 } = globalState.signupProcess
+    const [cookies, setCookie, removeCookie] = useCookies(['token'])
+    const [error, setError] = useState("")
 
     useEffect(() => {
       globalState.setSignupProcess({
@@ -21,28 +21,54 @@ const Register = ({state, callback, parentStateModifier}) => {
       globalState.setSignupProcess(tmp)
     }
     
-    // const [email, setEmail] = useState('')
-    // const [username, setUsername] = useState('')
-    // const [password1, setPassword1] = useState('')
-    // const [password2, setPassword2] = useState('')
-  
-    // const changeEmail = (event) => setEmail(event.target.value)
-    // const changeUsername = (event) => setUsername(event.target.value)
-    // const changePassword1 = (event) => setPassword1(event.target.value)
-    // const changePassword2 = (event) => setPassword2(event.target.value)
-    
     const submit = () => {
       if (password1.length != "" &&
           password1 == password2 &&
           username.length != "" &&
           email.length != "") {
-        globalState.setSignupProcess({
-          currentStep: 2,
-          password: password1,
-          username,
-          email
-      })
-      }
+        
+            fetch(process.env.REACT_APP_PROVIDER_API_URL + '/account', {
+              method: 'post', mode: 'cors',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                username,
+                password: password1,
+                email
+              })})
+            .then(data => {
+              if (data.status == 500) {
+                return data.json()
+                .then(data => {
+                  throw new Error(data.data)
+                })
+              }
+              return data
+            })
+            .then(data => data.json())
+            .then(data => data.data)
+            .then(data => {
+              const id = data.id
+              const token = data.token
+              globalState.setClient({
+                id, email, username
+              })
+              setCookie('token', token)
+            })
+            .then(() => {
+              globalState.setSignupProcess({
+                ...globalState.signupProcess,
+                currentStep: 2
+              })
+            })
+            .catch(e => {
+              setError(e.message)
+              console.log(e)
+            })
+
+              
+          }
     }
 
     return (
@@ -82,8 +108,18 @@ const Register = ({state, callback, parentStateModifier}) => {
             <div class="field">
             <div className="control">
               <button class="button is-danger" onClick={submit}>Register Now</button>
+
             </div>
             </div>
+            <div class="field">
+            <div className="control">
+            {
+                error ? 
+                <p class="has-text-danger">{error}</p> :
+                null
+              }
+              </div>
+              </div>
       </div>
       <div class="column"></div>
 
@@ -91,6 +127,6 @@ const Register = ({state, callback, parentStateModifier}) => {
     
       </Fragment>
     )
-  }      
+  }
   
   export default Register
