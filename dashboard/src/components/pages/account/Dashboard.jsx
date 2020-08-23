@@ -1,9 +1,8 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
 import GlobalContext from '../../../context/global/GlobalContext'
 import { useCookies } from 'react-cookie'
-import AccountSettings from './AccountSettings'
 
-const Stats = ({state}) => {
+const Dashboard = ({state}) => {
     const globalState = useContext(GlobalContext)
    
 
@@ -41,10 +40,10 @@ const Stats = ({state}) => {
             <div class="card has-background-success">
                 <div class="card-content">
                     <p class="title">
-                    149%
+                    19.9%
                     </p>
                     <p class="subtitle">
-                    As effective as naive baseline
+                    Estimated hit rate
                     </p>
                 </div>
                 </div>
@@ -57,4 +56,4 @@ const Stats = ({state}) => {
     )
   }
   
-  export default Stats
+  export default Dashboard

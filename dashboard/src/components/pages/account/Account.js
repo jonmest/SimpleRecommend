@@ -1,8 +1,8 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
 import GlobalContext from '../../../context/global/GlobalContext'
 import { useCookies } from 'react-cookie'
-import AccountSettings from './AccountSettings'
-import Stats from './Stats'
+import RecommendSettings from './RecommendSettings'
+import Dashboard from './Dashboard'
 
 const selections = {
     DASHBOARD: "DASHBOARD",
@@ -10,7 +10,7 @@ const selections = {
     ACCOUNT_SETTINGS: "ACCOUNT_SETTINGS"
 }
 
-const Dashboard = ({state}) => {
+const Account = ({state}) => {
     const globalState = useContext(GlobalContext)
  
     const [selected, setSelected] = useState(selections.DASHBOARD)
@@ -22,9 +22,9 @@ const Dashboard = ({state}) => {
     const getCurrentView = () => {
         switch (selected) {
             case selections.DASHBOARD:
-                return <Stats/>
+                return <Dashboard/>
             case selections.REC_SETTINGS:
-                return <AccountSettings/>
+                return <RecommendSettings/>
         }
     }
 
@@ -38,9 +38,15 @@ const Dashboard = ({state}) => {
                 General
             </p>
             <ul class="menu-list">
-                <li><a id={selections.DASHBOARD} onClick={handleClick} >Dashboard</a></li>
-                <li><a id={selections.REC_SETTINGS} onClick={handleClick} >Recommendation Settings</a></li>
-                <li><a id={selections.ACCOUNT_SETTINGS} onClick={handleClick} >Account</a></li>
+                <li><a class={
+                    (selected == selections.DASHBOARD) ?
+                    "active" : "" } id={selections.DASHBOARD} onClick={handleClick} >Dashboard</a></li>
+                <li><a class={
+                    (selected == selections.REC_SETTINGS) ?
+                    "active" : "" } id={selections.REC_SETTINGS} onClick={handleClick} >Recommendation Settings</a></li>
+                <li><a class={
+                    (selected == selections.ACCOUNT_SETTINGS) ?
+                    "active" : "" } id={selections.ACCOUNT_SETTINGS} onClick={handleClick} >Account</a></li>
             </ul>
             </div>
             <div class="column">
@@ -55,4 +61,4 @@ const Dashboard = ({state}) => {
     )
   }
   
-  export default Dashboard
+  export default Account

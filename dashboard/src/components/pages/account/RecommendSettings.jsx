@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect, useContext } from 'react'
 import GlobalContext from '../../../context/global/GlobalContext'
 import { useCookies } from 'react-cookie'
 
-const AccountSettings = ({state}) => {
+const RecommendSettings = ({state}) => {
     const globalState = useContext(GlobalContext)
    
 
@@ -13,14 +13,14 @@ const AccountSettings = ({state}) => {
           <form class="form-horizontal" >
         <fieldset>
 
-        <legend>Form Name</legend>
+        <legend>Settings for recommendation generation</legend>
 
 
         <div class="field">
-        <label class="label" for="textinput-0">Origin Adresses</label>
+        <label class="label" for="textinput-0">Origin Domain</label>
         <div class="control">
-            <input id="textinput-0" name="textinput-0" type="text" placeholder="YourCompany.com" class="input " required/>
-            <p class="help">Enter all domains for the sites you want to track, separated by a comma. IE yourcompany.com. This is required to prevent others from tampering with your user data.</p>
+            <input id="textinput-0" name="textinput-0" type="text" placeholder="YourCompanySite.com" class="input " required/>
+            <p class="help">Enter the domain for the site you want to track. IE yourcompany.com. This is required to prevent others from tampering with your user data.</p>
         </div>
         </div>
 
@@ -28,14 +28,11 @@ const AccountSettings = ({state}) => {
         <div class="field">
         <label class="label" for="multipleradios-0">Type of data to track and compute recommendations on</label>
         <div class="control">
-            <label class="radio" for="multipleradios-0-0">
-            <input type="radio" name="multipleradios-0" id="multipleradios-0-0" value="User dwell time" checked="checked" required="required"/>
-            User dwell time
-            </label>
             <label class="radio" for="multipleradios-0-1">
-            <input type="radio" name="multipleradios-0" id="multipleradios-0-1" value="User ratings" required="required"/>
+            <input type="radio" name="multipleradios-0" id="multipleradios-0-1" checked="checked" value=" User ratings" required="required"/>
             User ratings
             </label>
+
         </div>
         </div>
 
@@ -54,4 +51,4 @@ const AccountSettings = ({state}) => {
     )
   }
   
-  export default AccountSettings
+  export default RecommendSettings
