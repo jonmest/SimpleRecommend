@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"provider-area/db"
 	"provider-area/models"
 
@@ -13,8 +14,8 @@ import (
 func GetUserIdFromToken(c *fiber.Ctx) string {
 	token := c.Locals("user").(*jwt.Token)
 	claims := token.Claims.(jwt.MapClaims)
-	id := claims["user_id"].(string)
-	return id
+	id := claims["user_id"].(float64)
+	return fmt.Sprintf("%d", uint(id))
 }
 
 // CheckPasswordHash compare password with hash

@@ -31,17 +31,17 @@ func main() {
 	account.Post("/", controllers.CreateAccountAndCustomer)
 
 	// Protected
-	account.Get("/:id", mymw.Protected(), controllers.GetUser)
-	account.Patch("/:id", mymw.Protected(), controllers.UpdateUser)
-	account.Delete("/:id", mymw.Protected(), controllers.DeleteAccount)
+	account.Get("/", mymw.Protected(), controllers.GetUser)
+	account.Patch("/", mymw.Protected(), controllers.UpdateUser)
+	account.Delete("/", mymw.Protected(), controllers.DeleteAccount)
 
-	account.Post("/subscribe/:id", mymw.Protected(), controllers.HandleCreateSubscription)
+	account.Post("/subscribe/", mymw.Protected(), controllers.HandleCreateSubscription)
 
 	items := account.Group("/items")
-	items.Post("/:id", mymw.Protected(), controllers.PostItems)
-	items.Get("/:id", mymw.Protected(), controllers.GetItems)
-	items.Patch("/:id", mymw.Protected(), controllers.UpdateItems)
-	items.Delete("/:id", mymw.Protected(), controllers.DeleteItems)
+	items.Post("/", mymw.Protected(), controllers.PostItems)
+	items.Get("/", mymw.Protected(), controllers.GetItems)
+	items.Patch("/", mymw.Protected(), controllers.UpdateItems)
+	items.Delete("/", mymw.Protected(), controllers.DeleteItems)
 
 	app.Listen(8080)
 }
