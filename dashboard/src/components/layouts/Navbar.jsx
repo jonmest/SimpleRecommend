@@ -1,12 +1,18 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
+import GlobalContext from '../../context/global/GlobalContext'
 
 const Navbar = props => {
+  const globalState = useContext(GlobalContext)
+  const { isAuthenticated, loading } = globalState
 
-    return (
+  useEffect(() => {
+  }, [isAuthenticated])
+  
+  return (
       <Fragment>
           <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
-    <a class="navbar-item" href="https://bulma.io">
+    <a class="navbar-item" href="/">
       <p className="title">SimpleRecommend</p>
     </a>
 
@@ -52,14 +58,20 @@ const Navbar = props => {
 
     <div class="navbar-end">
       <div class="navbar-item">
-        <div class="buttons">
-          <a class="button is-primary">
-            <strong>Sign up</strong>
-          </a>
-          <a class="button is-light">
-            Log in
-          </a>
-        </div>
+        {
+          isAuthenticated ?
+          <p>You're logged in.</p> :
+          <Fragment>
+            <div class="buttons">
+              <a class="button is-primary">
+                <strong>Sign up</strong>
+              </a>
+              <a class="button is-light">
+                Log in
+              </a>
+            </div>
+          </Fragment>
+        }  
       </div>
     </div>
   </div>

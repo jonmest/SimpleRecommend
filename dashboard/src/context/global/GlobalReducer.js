@@ -1,6 +1,7 @@
 import {
     SET_SIGNUP_STATE,
-    SET_CLIENT_STATE
+    SET_CLIENT_STATE,
+    SET_IS_LOGGED_IN
 } from '../types'
 
 export default (state, action) => {
@@ -16,11 +17,12 @@ export default (state, action) => {
         case SET_CLIENT_STATE:
             return {
                 ...state,
-                client: {
-                    username: action.payload.username,
-                    id: action.payload.id,
-                    email: action.payload.email
-                }
+                client: action.payload
+            }
+        case SET_IS_LOGGED_IN:
+            return {
+                ...state,
+                isAuthenticated: action.payload
             }
         default:
             return state;

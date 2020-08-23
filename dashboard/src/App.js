@@ -15,14 +15,13 @@ import {Elements} from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
 import GlobalState from './context/global/GlobalState'
 import SuccessComponent from './components/pages/SignUp/SuccessComponent'
-
-const stripePromise = loadStripe("pk_test_51HIgVeCAPJL19xqxtQVRx9EESZ5UtuIivpjweKe2xbNtNysCzHwyWN9nHkzztiM5Z9VJQrhmFveSzWM2SwPbjUVZ00bbeKbX6J");
-
+import ProtectedRoute from './components/ProtectedRoute'
+import AccountSettings from './components/pages/account/AccountSettings'
+import Dashboard from './components/pages/account/Dashboard'
 function App() {
   return (
     <CookiesProvider>
     <GlobalState>
-      <Elements stripe={stripePromise}>
 
     <Router>
         <Navbar/>
@@ -32,10 +31,10 @@ function App() {
             <Route exact path='/login' component={Login}/>
             <Route exact path='/register' component={SignUpWizard}/>
             <Route exact path='/success' component={SuccessComponent}/>
-
+            <ProtectedRoute path='/account' component={AccountSettings}/>
+            <Route exact path='/settings' component={Dashboard}/>
           </Switch>
         </Router>
-        </Elements>
     </GlobalState>
     </CookiesProvider>
   );
