@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"os"
 	"provider-area/config"
 	"provider-area/db"
 	"provider-area/models"
@@ -12,8 +11,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber"
 	"github.com/jinzhu/gorm"
-	"github.com/stripe/stripe-go/v71"
-	"github.com/stripe/stripe-go/v71/customer"
 )
 
 const MIN_PWD_LEN int = 7
@@ -32,14 +29,13 @@ func GetUser(c *fiber.Ctx) {
 	c.JSON(fiber.Map{"status": "success", "message": "User found", "data": user})
 }
 
-func CreateAccountAndCustomer(c *fiber.Ctx) {
+func CreateAccount(c *fiber.Ctx) {
 	// To return in response
 	type NewAccount struct {
-		ID       uint             `json:"id"`
-		Username string           `json:"username"`
-		Email    string           `json:"email"`
-		Token    string           `json:"token"`
-		Customer *stripe.Customer `json:"stripe_customer"`
+		ID       uint   `json:"id"`
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		Token    string `json:"token"`
 	}
 	db := db.DB
 	input := *new(forms.Provider)
@@ -64,27 +60,24 @@ func CreateAccountAndCustomer(c *fiber.Ctx) {
 		return
 	}
 
-	/**
-	* Create a Stripe customer
-	 */
-	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
-	params := &stripe.CustomerParams{
-		Email: stripe.String(input.Email),
+	not_taken_email := db.Where("email = ?", input.Email).First(&models.Provider{}).RecordNotFound()
+	if !not_taken_email {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": "Email is taken. Try logging in or using a different email."})
+		return
 	}
 
-	cus, err := customer.New(params)
-	if err != nil {
-		c.SendStatus(fiber.StatusInternalServerError)
+	not_taken_username := db.Where("username = ?", input.Username).First(&models.Provider{}).RecordNotFound()
+	if !not_taken_username {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": "Username is taken. Try logging in or using a different username."})
 		return
 	}
 
 	// Instantiate Provider struct and save in DB
 	account := models.Provider{
-		Username:         input.Username,
-		Active:           false,
-		Email:            input.Email,
-		PasswordHash:     hash,
-		StripeCustomerId: cus.ID,
+		Username:     input.Username,
+		Active:       false,
+		Email:        input.Email,
+		PasswordHash: hash,
 	}
 	if err := db.Create(&account).Error; err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": err})
@@ -122,7 +115,6 @@ func CreateAccountAndCustomer(c *fiber.Ctx) {
 		Email:    input.Email,
 		Username: input.Username,
 		Token:    t,
-		Customer: cus,
 		ID:       u.ID,
 	}
 

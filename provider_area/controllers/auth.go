@@ -21,7 +21,8 @@ func Login(c *fiber.Ctx) {
 		ID       uint   `json:"id"`
 		Username string `json:"username"`
 		Email    string `json:"email"`
-		Password string `json:"password"`
+		Plan     string `json:"plan"`
+		Active   bool   `json:"active"`
 	}
 	var ud UserData
 
@@ -63,22 +64,31 @@ func Login(c *fiber.Ctx) {
 			ID:       user.ID,
 			Username: user.Username,
 			Email:    user.Email,
-			Password: user.PasswordHash,
+			Plan:     user.Plan,
+			Active:   user.Active,
 		}
 	} else {
 		ud = UserData{
 			ID:       email.ID,
 			Username: email.Username,
 			Email:    email.Email,
-			Password: email.PasswordHash,
+			Plan:     email.Plan,
+			Active:   email.Active,
 		}
+	}
+
+	var hsh string
+	if email == nil {
+		hsh = user.PasswordHash
+	} else {
+		hsh = email.PasswordHash
 	}
 	/**
 	* If request body's password does not have
 	* the same hash as user's stored hash,
 	* return unauthorized response
 	 */
-	if !util.CheckPasswordHash(pass, ud.Password) {
+	if !util.CheckPasswordHash(pass, hsh) {
 		c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid password", "data": nil})
 		return
 	}
@@ -99,5 +109,5 @@ func Login(c *fiber.Ctx) {
 	}
 
 	// Return JWT token
-	c.JSON(fiber.Map{"status": "success", "message": "Success login", "token": t, "user_id": ud.ID})
+	c.JSON(fiber.Map{"status": "success", "message": "Success login", "token": t, "user": ud})
 }

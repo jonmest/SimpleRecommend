@@ -9,7 +9,6 @@ from compute import compute
 from datetime import datetime
 import multiprocessing as mp
 
-# logging.basicConfig(filename='app.log', filemode='a', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s [in %(pathname)s:%(lineno)d]')
 logging.warning('This will get logged to a file')
 

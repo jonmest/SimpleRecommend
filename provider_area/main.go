@@ -28,14 +28,14 @@ func main() {
 
 	// Account section
 	account := app.Group("/account")
-	account.Post("/", controllers.CreateAccountAndCustomer)
+	account.Post("/", controllers.CreateAccount)
 
 	// Protected
 	account.Get("/", mymw.Protected(), controllers.GetUser)
 	account.Patch("/", mymw.Protected(), controllers.UpdateUser)
 	account.Delete("/", mymw.Protected(), controllers.DeleteAccount)
 
-	account.Post("/subscribe/", mymw.Protected(), controllers.HandleCreateSubscription)
+	account.Post("/session", mymw.Protected(), controllers.HandleCreateSession)
 
 	items := account.Group("/items")
 	items.Post("/", mymw.Protected(), controllers.PostItems)
