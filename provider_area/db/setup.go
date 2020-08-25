@@ -19,7 +19,6 @@ func ConnectDatabase() {
 		panic(err)
 	}
 
-	database.AutoMigrate(&models.Item{})
 	database.AutoMigrate(&models.Provider{})
 
 	rdb := redis.NewClient(&redis.Options{

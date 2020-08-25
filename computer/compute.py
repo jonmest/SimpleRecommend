@@ -15,10 +15,6 @@ class LoadData:
     def __init__(self, provider_id, cursor):
         print("Loading data from database...")
 
-        # Fetch provider's items, actors
-        cursor.execute('SELECT id FROM items WHERE provider = %s', (provider_id,))
-        items = [r[0] for r in cursor.fetchall()]
-
         cursor.execute('SELECT id FROM actors WHERE provider = %s', (provider_id,))
         actors = [r[0] for r in cursor.fetchall()]
 
@@ -27,7 +23,6 @@ class LoadData:
         events = cursor.fetchall()
         events = convert_to_dict(cursor.description, events)
 
-        self.items = items
         self.actors = actors
         self.events = events
 
@@ -47,13 +42,14 @@ def compute (body, pool, redis):
 
     # Load dataframe
     ds = dataset_from_events(
-        d.actors, d.items, d.events,
+        d.actors, d.events,
         event_key_actor="actor", event_key_item="item",
         event_key_data="data", MIN_RATING=MIN_RATING, MAX_RATING=MAX_RATING
     )
+    
     trainset = ds.build_full_trainset()
 
-    knn = KNN_ItemBased(trainset, d.actors, d.items)
+    knn = KNN_ItemBased(trainset, d.actors)
     knn.compute_similarities()
     recs = knn.get_recommendations()
 
@@ -76,7 +72,7 @@ def compute (body, pool, redis):
         $do$
     """, (actor_id, provider_username, recommendations, actor_id, provider_username, provider_username, actor_id, recommendations))
 
-    cursor.commit()
+    conn.commit()
     cursor.close()
     # Delete actor's old recommendations from redis
     redis.delete('recs_{}_{}'.format(provider_username, actor_id))

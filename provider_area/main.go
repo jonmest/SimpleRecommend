@@ -37,11 +37,5 @@ func main() {
 
 	account.Post("/session", mymw.Protected(), controllers.HandleCreateSession)
 
-	items := account.Group("/items")
-	items.Post("/", mymw.Protected(), controllers.PostItems)
-	items.Get("/", mymw.Protected(), controllers.GetItems)
-	items.Patch("/", mymw.Protected(), controllers.UpdateItems)
-	items.Delete("/", mymw.Protected(), controllers.DeleteItems)
-
 	app.Listen(8080)
 }

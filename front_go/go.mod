@@ -7,4 +7,5 @@ require (
 	github.com/go-redis/redis/v8 v8.0.0-beta.7
 	github.com/gofiber/fiber v1.13.3
 	github.com/jinzhu/gorm v1.9.15
+	go.mongodb.org/mongo-driver v1.4.0
 )

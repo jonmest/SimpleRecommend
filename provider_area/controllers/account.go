@@ -123,7 +123,9 @@ func CreateAccount(c *fiber.Ctx) {
 
 func UpdateUser(c *fiber.Ctx) {
 	type UpdateUserInput struct {
-		TypeOfUserData string `json:"type_of_user_data"`
+		MaxRating float64 `json:"max_rating"`
+		MinRating float64 `json:"min_rating"`
+		Domain    string  `json:"domain"`
 	}
 	var input UpdateUserInput
 	if err := c.BodyParser(&input); err != nil {
@@ -136,9 +138,9 @@ func UpdateUser(c *fiber.Ctx) {
 	db := db.DB
 	var user models.Provider
 	db.First(&user, id)
-	if input.TypeOfUserData != "" {
-		user.TypeOfUserData = input.TypeOfUserData
-	}
+	user.Max_Rating = input.MaxRating
+	user.Min_Rating = input.MinRating
+	user.Domain = input.Domain
 	db.Save(&user)
 
 	c.JSON(fiber.Map{"status": "success", "message": "User successfully updated", "data": user})

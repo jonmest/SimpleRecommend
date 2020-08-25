@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from surprise import Dataset, Reader
 
-def dataset_from_events(actors, items, list_of_events, event_key_actor,
+def dataset_from_events(actors, list_of_events, event_key_actor,
                         event_key_item, event_key_data, MAX_RATING, MIN_RATING):
     df_dic = {
             "actor": np.zeros(len(list_of_events), dtype='U64'),
@@ -18,5 +18,5 @@ def dataset_from_events(actors, items, list_of_events, event_key_actor,
     df = pd.DataFrame(df_dic)
 
     reader = Reader(rating_scale=(MIN_RATING, MAX_RATING))
-    data = Dataset.load_from_df(df[['actor', 'item', 'rating']], reader)
+    data = Dataset.load_from_df(df, reader)
     return data

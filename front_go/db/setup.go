@@ -18,15 +18,7 @@ func ConnectDatabase() {
 		panic(err)
 	}
 
-	if !database.HasTable("actors") {
-		database.CreateTable(&models.Actor{})
-	}
-	if !database.HasTable("events") {
-		database.CreateTable(&models.Event{})
-	}
-	if !database.HasTable("recommendations") {
-		database.CreateTable(&models.Recommendation{})
-	}
+	database.AutoMigrate(&models.Actor{}, &models.Event{}, &models.Recommendation{})
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "redis-server:6379",

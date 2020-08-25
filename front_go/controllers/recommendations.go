@@ -36,9 +36,9 @@ func GetRecommendations(c *fiber.Ctx) {
 	key := fmt.Sprintf("recs:%v_%v", provider, actor)
 	redisString, err := db.RDB.Get(ctx, key).Result()
 
-	if err != nil {
-		var recommendation models.Recommendation
-		db.DB.Where(&models.Actor{ID: actor, Provider: provider}).First(&recommendation)
+	if err != nil || redisString == "" {
+		var recommendation []models.Recommendation
+		db.DB.Where("actor = ? AND provider = ?", actor, provider).First(&recommendation)
 		// db.DB.Raw("SELECT items FROM recommendations WHERE actor = ($1) AND provider = ($2);",
 		// 	actor, provider).Row().Scan(&rawString)
 
@@ -48,12 +48,12 @@ func GetRecommendations(c *fiber.Ctx) {
 			// Log something
 		}
 
-		if len(recommendation.Items) == 0 {
+		if len(recommendation) == 0 {
 			c.Status(500).JSON(fiber.Map{"error": "No recommendations could be found."})
 			return
 		}
 
-		json.Unmarshal([]byte(rawString), &recommendation.Items)
+		json.Unmarshal([]byte(rawString), &recommendation)
 		c.Status(200).JSON(fiber.Map{"items": items})
 		return
 	}
