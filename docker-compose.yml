@@ -17,6 +17,8 @@ services:
         restart: always
         volumes:
             - ./computer/src/app:/home/jon/Code/RAAS/computer
+        stdin_open: true # docker run -i
+        tty: true        # docker run -t
     go-app:
         build: ./front_go
         ports:
@@ -29,8 +31,8 @@ services:
         build: ./dashboard
         ports:
             - 3001:3000
-        stdin_open: true # docker run -i
-        tty: true        # docker run -t
+        # stdin_open: true # docker run -i
+        # tty: true        # docker run -t
         environment:
             - CHOKIDAR_USEPOLLING=true
 volumes:

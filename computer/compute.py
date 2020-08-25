@@ -58,15 +58,9 @@ def compute (body, pool, redis):
     recs = knn.get_recommendations()
 
     for actor_id in recs.keys():
-        actor_id = key
-        recommendations = recs[actor_id]
+        recommendations = [r[0] for r in recs[actor_id]]
         # Store somewhere
-
-    recommendations = knn.get_recommendations(actor_id).tolist()
-    recommendation_string = json.dumps(recommendations)
-
-    # Store recommendations in SQL
-    cursor.execute("""
+        cursor.execute("""
         DO
         $do$
         BEGIN
@@ -80,8 +74,9 @@ def compute (body, pool, redis):
             END IF;
         END
         $do$
-    """, (actor_id, provider_username, recommendation_string, actor_id, provider_username, provider_username, actor_id, recommendation_string))
+    """, (actor_id, provider_username, recommendations, actor_id, provider_username, provider_username, actor_id, recommendations))
 
+    cursor.commit()
     cursor.close()
     # Delete actor's old recommendations from redis
-    redis.delete('recs_{}_{}'.format(provider_id, actor_id))
+    redis.delete('recs_{}_{}'.format(provider_username, actor_id))

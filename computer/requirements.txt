@@ -5,3 +5,5 @@ redis==3.5.3
 psycopg2==2.8.5
 python-dotenv==0.14.0
 scikit_learn==0.23.2
+scikit-surprise==1.1.1
+pandas==1.1.0
