@@ -1,10 +1,17 @@
 import psycopg2
 import psycopg2.extras
-from KNN.KNN_Engine import KNN_Engine
+import heapq
 from util import convert_to_dict
 import json
+from Dataset import dataset_from_events
+from surprise import Dataset, Reader
+from surprise import KNNBasic
+from surprise.model_selection import train_test_split
+from collections import defaultdict
+from operator import itemgetter
+from KNN import KNN_ItemBased
 
-class KNN_Dataset:
+class LoadData:
     def __init__(self, provider_id, cursor):
         print("Loading data from database...")
 
@@ -28,19 +35,32 @@ def compute (body, pool, redis):
     print("Initiate computation.")
 
     actor_id = body["actor"]
-    provider_id = body["provider"]
+    provider_username = body["provider"]
 
     conn = pool.getconn()
     cursor = conn.cursor()
-    
-    ds = KNN_Dataset(provider_id, cursor)
 
-    # Load model
-    knn = KNN_Engine.from_events(
-        ds.actors, ds.items, ds.events,
-        event_key_actor="actor", event_key_item="item"
+    cursor.execute('SELECT max_rating, min_rating FROM providers WHERE username = %s', (provider_username,))
+    (MAX_RATING, MIN_RATING) = cursor.fetchone()
+    
+    d = LoadData(provider_username, cursor)
+
+    # Load dataframe
+    ds = dataset_from_events(
+        d.actors, d.items, d.events,
+        event_key_actor="actor", event_key_item="item",
+        event_key_data="data", MIN_RATING=MIN_RATING, MAX_RATING=MAX_RATING
     )
-    knn.calculate_neighbours()
+    trainset = ds.build_full_trainset()
+
+    knn = KNN_ItemBased(trainset, d.actors, d.items)
+    knn.compute_similarities()
+    recs = knn.get_recommendations()
+
+    for actor_id in recs.keys():
+        actor_id = key
+        recommendations = recs[actor_id]
+        # Store somewhere
 
     recommendations = knn.get_recommendations(actor_id).tolist()
     recommendation_string = json.dumps(recommendations)
@@ -60,7 +80,7 @@ def compute (body, pool, redis):
             END IF;
         END
         $do$
-    """, (actor_id, provider_id, recommendation_string, actor_id, provider_id, provider_id, actor_id, recommendation_string))
+    """, (actor_id, provider_username, recommendation_string, actor_id, provider_username, provider_username, actor_id, recommendation_string))
 
     cursor.close()
     # Delete actor's old recommendations from redis
