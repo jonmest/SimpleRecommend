@@ -55,6 +55,7 @@ def compute (body, pool, redis):
 
     for actor_id in recs.keys():
         recommendations = [r[0] for r in recs[actor_id]]
+        jsonarr = json.dumps(recommendations)
         # Store somewhere
         cursor.execute("""
         DO
@@ -70,7 +71,7 @@ def compute (body, pool, redis):
             END IF;
         END
         $do$
-    """, (actor_id, provider_username, recommendations, actor_id, provider_username, provider_username, actor_id, recommendations))
+    """, (actor_id, provider_username, jsonarr, actor_id, provider_username, provider_username, actor_id, jsonarr))
 
     conn.commit()
     cursor.close()

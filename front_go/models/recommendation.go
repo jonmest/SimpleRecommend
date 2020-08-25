@@ -6,5 +6,5 @@ type Recommendation struct {
 	gorm.Model
 	Provider string
 	Actor    string
-	Items    []string
+	Items    string
 }
