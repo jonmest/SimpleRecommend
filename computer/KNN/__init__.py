@@ -1,7 +1,7 @@
 import numpy as np
 from  sklearn import neighbors
 from surprise import Dataset, Reader
-from surprise import KNNBasic
+from surprise import KNNBaseline
 import statistics
 
 import heapq
@@ -18,8 +18,8 @@ class KNN_ItemBased:
         self.recommendations = {}
         self.sims_matrix = None
     
-    def compute_similarities(self, sim_options= {'name': 'cosine', 'user_based': False }):
-        model = KNNBasic(sim_options=sim_options)
+    def compute_similarities(self, sim_options= {'name': 'pearson_baseline', 'user_based': False }):
+        model = KNNBaseline(sim_options=sim_options)
         model.fit(self.dataset)
         self.sims_matrix = model.compute_similarities()
 
