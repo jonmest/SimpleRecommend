@@ -27,8 +27,9 @@ func GetRecommendations(c *fiber.Ctx) {
 		return
 	}
 	var recommendation models.Recommendation
-	db.DB.Where("actor = ? AND provider = ?", actor, provider).First(&recommendation)
-
+	db.DB.Raw("SELECT * FROM recommendations WHERE actor = ? AND provider = ? ORDER BY created DESC LIMIT 1", actor, provider).Scan(&recommendation)
+	// db.DB.Order("created").Where("actor = ? AND provider = ?", actor, provider).Find(&recommendation)
+	// last := len(recommendation) - 1
 	var items []string
 	json.Unmarshal([]byte(recommendation.Items), &items)
 	c.Status(200).JSON(fiber.Map{"items": items})

@@ -10,6 +10,7 @@ from surprise.model_selection import train_test_split
 from collections import defaultdict
 from operator import itemgetter
 from KNN import KNN_ItemBased
+import datetime  
 
 class LoadData:
     def __init__(self, provider_id, cursor):
@@ -53,25 +54,17 @@ def compute (body, pool, redis):
     knn.compute_similarities()
     recs = knn.get_recommendations()
 
+    current_time = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+    print("CURRENT TIME: ", current_time)
     for actor_id in recs.keys():
         recommendations = [r[0] for r in recs[actor_id]]
         jsonarr = json.dumps(recommendations)
+        print(jsonarr)
         # Store somewhere
         cursor.execute("""
-        DO
-        $do$
-        BEGIN
-            IF EXISTS (SELECT * FROM recommendations WHERE actor = %s AND provider = %s) THEN
-                UPDATE recommendations
-                SET items = %s
-                WHERE actor = %s AND provider = %s;
-            ELSE
-                INSERT INTO recommendations (provider, actor, items)
-                VALUES (%s, %s, %s);
-            END IF;
-        END
-        $do$
-    """, (actor_id, provider_username, jsonarr, actor_id, provider_username, provider_username, actor_id, jsonarr))
+        INSERT INTO recommendations (provider, actor, items, created)
+        VALUES (%s, %s, %s, TO_TIMESTAMP(%s, 'YYYY/MM/DD HH24:MI:SS'));
+    """, (provider_username, actor_id, jsonarr, current_time))
 
     conn.commit()
     cursor.close()

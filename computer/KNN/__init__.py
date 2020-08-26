@@ -1,7 +1,7 @@
 import numpy as np
 from  sklearn import neighbors
 from surprise import Dataset, Reader
-from surprise import KNNBaseline
+from surprise import KNNBasic
 import statistics
 
 import heapq
@@ -18,8 +18,8 @@ class KNN_ItemBased:
         self.recommendations = {}
         self.sims_matrix = None
     
-    def compute_similarities(self, sim_options= {'name': 'pearson_baseline', 'user_based': False }):
-        model = KNNBaseline(sim_options=sim_options)
+    def compute_similarities(self, sim_options= {'name': 'cosine', 'user_based': False }):
+        model = KNNBasic(sim_options=sim_options)
         model.fit(self.dataset)
         self.sims_matrix = model.compute_similarities()
 
@@ -33,11 +33,10 @@ class KNN_ItemBased:
             try:
                 mean_rating = statistics.mean(ratings_data)
                 max_rating = max(ratings_data)
-                std = statistics.stdev(ratings_data)
-                criteria = mean_rating + 1 * std #Has be be at least 1 std above mean
+                criteria = mean_rating 
                 k_neighbours = []
-
                 for rating in actor_ratings:
+                    print(rating)
                     if rating[1] > criteria:
                         k_neighbours.append(rating)
                 
@@ -62,6 +61,7 @@ class KNN_ItemBased:
                         pos += 1
                         if (pos > top_k):
                             break
+                print("Actor: ", actor, " - ", self.recommendations[actor])
             except:
                 continue
         return self.recommendations

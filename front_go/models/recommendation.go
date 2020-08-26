@@ -1,10 +1,15 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"time"
+
+	"github.com/jinzhu/gorm"
+)
 
 type Recommendation struct {
 	gorm.Model
-	Provider string
-	Actor    string
-	Items    string
+	Provider string `json:"-"`
+	Actor    string `json:"-"`
+	Items    string `json:"items"`
+	Created  time.Time
 }

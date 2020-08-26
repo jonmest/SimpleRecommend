@@ -18,11 +18,14 @@ func Login(c *fiber.Ctx) {
 	}
 	var input LoginInput
 	type UserData struct {
-		ID       uint   `json:"id"`
-		Username string `json:"username"`
-		Email    string `json:"email"`
-		Plan     string `json:"plan"`
-		Active   bool   `json:"active"`
+		ID         uint    `json:"id"`
+		Username   string  `json:"username"`
+		Email      string  `json:"email"`
+		Plan       string  `json:"plan"`
+		Active     bool    `json:"active"`
+		Max_Rating float64 `json:"max_rating"`
+		Min_Rating float64 `json:"min_rating"`
+		Domain     string  `json:"domain"`
 	}
 	var ud UserData
 
@@ -61,19 +64,25 @@ func Login(c *fiber.Ctx) {
 
 	if email == nil {
 		ud = UserData{
-			ID:       user.ID,
-			Username: user.Username,
-			Email:    user.Email,
-			Plan:     user.Plan,
-			Active:   user.Active,
+			ID:         user.ID,
+			Username:   user.Username,
+			Email:      user.Email,
+			Plan:       user.Plan,
+			Active:     user.Active,
+			Max_Rating: user.Max_Rating,
+			Min_Rating: user.Min_Rating,
+			Domain:     user.Domain,
 		}
 	} else {
 		ud = UserData{
-			ID:       email.ID,
-			Username: email.Username,
-			Email:    email.Email,
-			Plan:     email.Plan,
-			Active:   email.Active,
+			ID:         email.ID,
+			Username:   email.Username,
+			Email:      email.Email,
+			Plan:       email.Plan,
+			Active:     email.Active,
+			Max_Rating: email.Max_Rating,
+			Min_Rating: email.Min_Rating,
+			Domain:     email.Domain,
 		}
 	}
 
