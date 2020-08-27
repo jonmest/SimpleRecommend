@@ -25,6 +25,7 @@ func main() {
 	db.ConnectDatabase()
 
 	app.Post("/login", controllers.Login)
+	app.Post("/webhook", controllers.WebHook)
 
 	// Account section
 	account := app.Group("/account")

@@ -9,10 +9,11 @@ import {
   Route,
   useRouteMatch
 } from "react-router-dom"
+import Loader from 'react-loader-spinner'
+
 
 const SignUpWizard = () => {
   const globalState = useContext(GlobalContext)
-  const { currentStep } = globalState.signupProcess
   const { setSignupProcess } = globalState
 
   useEffect(() => {
@@ -25,42 +26,48 @@ const SignUpWizard = () => {
       plan: "",
       priceId: "",
       sessionId: ""
-  })
+    })
   }, [])
 
 
   const getStep = () => {
-    switch (currentStep){
+    switch (globalState.signupProcess.currentStep) {
       case 1:
-        return <Register/>
+        return <Register />
       case 2:
-        return <SelectPlan/>
+        return <SelectPlan />
       case 3:
-        return <ConfirmOrder/>
+        return <ConfirmOrder />
       default:
         return null
     }
   }
 
-const goBack = () => {
-  const previousStep = currentStep - 1
-  setSignupProcess({...globalState.signupProcess, currentStep: previousStep})
-}
-
-const backButton = () => {
-  if (currentStep > 1) {
-    return <button onClick={goBack} className="button">← Previous</button>
+  const goBack = () => {
+    const previousStep = globalState.signupProcess.currentStep - 1
+    setSignupProcess({ ...globalState.signupProcess, currentStep: previousStep })
   }
-}
+
+  const backButton = () => {
+    if (globalState.signupProcess.currentStep > 1) {
+      return <button onClick={goBack} className="button">← Previous</button>
+    }
+  }
 
   return (
-    <section class = "section">
-    <div class = "container">
-    {backButton()}
-    <br/>
-      {getStep()}
-    </div>
-    </section>
+    !globalState.signupProcess ?
+      <Loader
+        type="Puff"
+        color="#00BFFF"
+        height={100}
+        width={100} //3 secs   
+      /> : <section class="section">
+        <div class="container">
+          {backButton()}
+          <br />
+          {getStep()}
+        </div>
+      </section>
   )
 }
 

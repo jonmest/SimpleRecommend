@@ -10,7 +10,7 @@ type Provider struct {
 	Plan             string  `gorm:"type:text" json:"plan"`
 	Active           bool    `gorm:"type:boolean" json:"active"`
 	StripeCustomerId string  `gorm:"type:text" json:"-"`
-	SubscriptionID   string  `gorm:"type:text" json:"-"`
+	SubscriptionId   string  `gorm:"type:text" json:"-"`
 	Max_Rating       float64 `gorm:"type:real" json:"max_rating"`
 	Min_Rating       float64 `gorm:"type:real" json:"min_rating"`
 	Domain           string  `gorm:"type:text" json:"domain"`
