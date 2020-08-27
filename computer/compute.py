@@ -48,23 +48,28 @@ def compute (body, pool, redis):
         event_key_data="data", MIN_RATING=MIN_RATING, MAX_RATING=MAX_RATING
     )
     
-    trainset = ds.build_full_trainset()
 
-    knn = KNN_ItemBased(trainset, d.actors)
+    knn = KNN_ItemBased(ds, d.actors)
     knn.compute_similarities()
     recs = knn.get_recommendations()
 
     current_time = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-    print("CURRENT TIME: ", current_time)
+
     for actor_id in recs.keys():
         recommendations = [r[0] for r in recs[actor_id]]
         jsonarr = json.dumps(recommendations)
-        print(jsonarr)
+
         # Store somewhere
         cursor.execute("""
         INSERT INTO recommendations (provider, actor, items, created)
         VALUES (%s, %s, %s, TO_TIMESTAMP(%s, 'YYYY/MM/DD HH24:MI:SS'));
     """, (provider_username, actor_id, jsonarr, current_time))
+
+    e = knn.get_error()
+    cursor.execute("""
+        INSERT INTO errors (provider, mean_rmse, std_rmse, mean_mae, std_mae, mean_fcp, std_fcp)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
+    """, (provider_username, e["mean_rmse"], e["std_rmse"], e["mean_mae"], e["std_mae"], e["mean_fcp"], e["std_fcp"]))
 
     conn.commit()
     cursor.close()

@@ -9,6 +9,7 @@ require (
 	github.com/gofiber/cors v0.2.2
 	github.com/gofiber/fiber v1.13.3
 	github.com/gofiber/jwt v0.2.0
+	github.com/golang/protobuf v1.4.2
 	github.com/jinzhu/gorm v1.9.15
 	github.com/joho/godotenv v1.3.0
 	github.com/stripe/stripe-go v70.15.0+incompatible

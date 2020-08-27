@@ -19,7 +19,7 @@ func ConnectDatabase() {
 		panic(err)
 	}
 
-	database.AutoMigrate(&models.Provider{})
+	database.AutoMigrate(&models.Provider{}, &models.Error{})
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "redis-server:6379",
