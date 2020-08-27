@@ -12,30 +12,30 @@ import {
 
 } from "react-router-dom"
 import { CookiesProvider } from 'react-cookie';
-import {Elements} from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import GlobalState from './context/global/GlobalState'
 import SuccessComponent from './components/pages/SignUp/SuccessComponent'
 import ProtectedRoute from './components/ProtectedRoute'
 import Account from './components/pages/account/Account'
+import AlertBar from './components/layouts/AlertBar';
 function App() {
   return (
     <CookiesProvider>
-    <GlobalState>
+      <GlobalState>
 
-    <Router>
-        <Navbar/>
-
+        <Router>
+          <Navbar />
+          <AlertBar />
           <Switch>
-            
-            <Route exact path='/login' component={Login}/>
-            <Route exact path='/register' component={SignUpWizard}/>
-            <Route exact path='/success' component={SuccessComponent}/>
-            <ProtectedRoute path='/account' component={Account}/>
-            <Route exact path='/settings' component={Account}/>
+
+            <Route exact path='/login' component={Login} />
+            <Route exact path='/register' component={SignUpWizard} />
+            <ProtectedRoute exact path='/success' component={SuccessComponent} />
+            <ProtectedRoute path='/account' component={Account} />
           </Switch>
         </Router>
-    </GlobalState>
+      </GlobalState>
     </CookiesProvider>
   );
 }

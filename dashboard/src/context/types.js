@@ -1,3 +1,5 @@
 export const SET_SIGNUP_STATE = 'SET_SIGNUP_STATE'
 export const SET_CLIENT_STATE = 'SET_CLIENT_STATE'
 export const SET_IS_LOGGED_IN = 'SET_IS_LOGGED_IN'
+export const PUSH_ALERT = 'PUSH_ALERT'
+export const SET_LOADING = 'SET_LOADING'

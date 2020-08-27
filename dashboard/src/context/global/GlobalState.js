@@ -4,7 +4,9 @@ import GlobalReducer from './GlobalReducer'
 import {
     SET_SIGNUP_STATE,
     SET_CLIENT_STATE,
-    SET_IS_LOGGED_IN
+    SET_IS_LOGGED_IN,
+    PUSH_ALERT,
+    SET_LOADING
 } from '../types'
 import Cookies from 'js-cookie'
 
@@ -14,10 +16,26 @@ const GlobalState = props => {
         client: null,
         signupProcess: null,
         isAuthenticated: false,
-        loading: false
+        loading: false,
+        alerts: []
     }
 
     const [state, dispatch] = useReducer(GlobalReducer, initialState)
+
+    const setLoading = bool => [
+        dispatch({
+            type: SET_LOADING,
+            payload: bool
+        })
+    ]
+
+    const pushAlert = payload => {
+        const pl = [...state.alerts, payload]
+        dispatch({
+            type: PUSH_ALERT,
+            payload: pl
+        })
+    }
 
     const setClient = state => {
         dispatch({
@@ -39,21 +57,24 @@ const GlobalState = props => {
             payload: state
         })
     }
-    
+
     return <GlobalContext.Provider
-    value={{
-        client: state.client,
-        signupProcess: state.signupProcess,
-        client: state.client,
-        isAuthenticated: state.isAuthenticated,
-        setIsAuthenticated,
-        setSignupProcess,
-        setClient,
-        loading: state.loading
+        value={{
+            client: state.client,
+            signupProcess: state.signupProcess,
+            client: state.client,
+            isAuthenticated: state.isAuthenticated,
+            alerts: state.alerts,
+            setIsAuthenticated,
+            setSignupProcess,
+            setClient,
+            pushAlert,
+            setLoading,
+            loading: state.loading
 
-    }}>
+        }}>
 
-        { props.children }
+        {props.children}
     </GlobalContext.Provider>
 }
 

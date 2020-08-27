@@ -1,20 +1,19 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
+import { Redirect } from 'react-router-dom'
+import GlobalContext from '../../../context/global/GlobalContext'
 
 const SuccessComponent = () => {
-  
+  const globalState = useEffect(GlobalContext)
+
+  // useEffect(() => {
+  //   globalState.pushAlert({
+  //     type: "success",
+  //     message: "Success! Your account is now registered."
+  //   });
+  // }, [])
+
   return (
-    <section class="hero is-success is-fullheight">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        Success!
-      </h1>
-      <h2 class="subtitle">
-        Your payment was successful. You now have full access to SimpleRecommend.
-      </h2>
-    </div>
-  </div>
-</section>
+    <Redirect to="/account" />
   )
 }
 
