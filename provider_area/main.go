@@ -34,7 +34,7 @@ func main() {
 	account.Get("/", mymw.Protected(), controllers.GetUser)
 	account.Patch("/", mymw.Protected(), controllers.UpdateUser)
 	account.Delete("/", mymw.Protected(), controllers.DeleteAccount)
-	account.Get("/stats", mymw.Protected(), controllers.GetStats)
+	account.Get("/statistics", mymw.Protected(), controllers.GetStats)
 	account.Post("/session", mymw.Protected(), controllers.HandleCreateSession)
 
 	app.Listen(8080)

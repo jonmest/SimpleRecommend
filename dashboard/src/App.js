@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.scss';
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Login from './components/pages/auth/Login'
 import Navbar from './components/layouts/Navbar'
 import SignUpWizard from './components/pages/SignUp/SignUpWizard'

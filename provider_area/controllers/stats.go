@@ -19,9 +19,10 @@ func get30DaysBackString() string {
 func GetStats(c *fiber.Ctx) {
 	// To return in response
 	type Stats struct {
-		UniqueUsersTotal     uint         `json:"unique_users_total"`
-		UniqueUsersLastMonth uint         `json:"unique_users_last_month"`
-		LastError            models.Error `json:"current_error"`
+		UniqueUsersTotal     uint           `json:"unique_users_total"`
+		UniqueUsersLastMonth uint           `json:"unique_users_last_month"`
+		LastError            models.Error   `json:"current_error"`
+		AllError             []models.Error `json:"errors_history"`
 	}
 
 	id := util.GetUserIdFromToken(c)
@@ -30,7 +31,7 @@ func GetStats(c *fiber.Ctx) {
 	var user models.Provider
 	db.Find(&user, id)
 	if user.Username == "" {
-		c.Status(404).JSON(fiber.Map{"status": "error", "message": "No user found with ID", "data": nil})
+		c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Unauthorized request. Must provide a valid token in authorization header."})
 		return
 	}
 
@@ -39,7 +40,6 @@ func GetStats(c *fiber.Ctx) {
 	var uniqueActorsLastMonth struct {
 		Count uint
 	}
-	fmt.Println(dateString)
 	db.Raw("SELECT COUNT(DISTINCT actor) FROM events WHERE provider = ? AND created_at >= TO_DATE(?,'YYYY/MM/DD HH24:MI:SS')", user.Username, dateString).Scan(&uniqueActorsLastMonth)
 
 	// Unique users total
@@ -52,11 +52,17 @@ func GetStats(c *fiber.Ctx) {
 	var lastError models.Error
 	db.Raw("SELECT * FROM errors WHERE provider = ? ORDER BY created_at DESC LIMIT 1", user.Username).Scan(&lastError)
 
+	var allErrors []models.Error
+	if c.Query("errors") == "all" {
+		db.Raw("SELECT * FROM errors WHERE provider = ?", user.Username).Scan(&allErrors)
+	}
+
 	stats := Stats{
 		UniqueUsersTotal:     uniqueActorsTotal.Count,
 		UniqueUsersLastMonth: uniqueActorsLastMonth.Count,
 		LastError:            lastError,
+		AllError:             allErrors,
 	}
 	// Get all Errors
-	c.JSON(fiber.Map{"status": "success", "message": "User found", "data": stats})
+	c.Status(200).JSON(fiber.Map{"status": "success", "data": stats})
 }

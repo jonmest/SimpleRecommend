@@ -67,9 +67,9 @@ def compute (body, pool, redis):
 
     e = knn.get_error()
     cursor.execute("""
-        INSERT INTO errors (provider, mean_rmse, std_rmse, mean_mae, std_mae, mean_fcp, std_fcp)
-        VALUES (%s, %s, %s, %s, %s, %s, %s);
-    """, (provider_username, e["mean_rmse"], e["std_rmse"], e["mean_mae"], e["std_mae"], e["mean_fcp"], e["std_fcp"]))
+        INSERT INTO errors (provider, mean_rmse, std_rmse, mean_mae, std_mae, mean_fcp, std_fcp, created_at)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, TO_TIMESTAMP(%s, 'YYYY/MM/DD HH24:MI:SS'));
+    """, (provider_username, e["mean_rmse"], e["std_rmse"], e["mean_mae"], e["std_mae"], e["mean_fcp"], e["std_fcp"], current_time))
 
     conn.commit()
     cursor.close()
