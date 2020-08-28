@@ -1,10 +1,10 @@
 import React, { Fragment, useState, useContext } from 'react'
 
-const Alert = ({ message, type, closeCallback }) => {
+const Alert = ({ message, type, closeCallback, id }) => {
 
     return (
         <Fragment>
-            <div class={"notification" + " is-" + type}>
+            <div id={id} class={"notification" + " is-" + type}>
                 <button message={message} type={type} onClick={closeCallback} class="delete"></button>
                 {message}
             </div>

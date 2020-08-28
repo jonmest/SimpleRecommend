@@ -17,7 +17,11 @@ const GlobalState = props => {
         signupProcess: null,
         isAuthenticated: false,
         loading: false,
-        alerts: []
+        alerts: {
+            inactive: null,
+            noDomain: null,
+            badRatings: null
+        }
     }
 
     const [state, dispatch] = useReducer(GlobalReducer, initialState)
@@ -29,18 +33,17 @@ const GlobalState = props => {
         })
     ]
 
-    const pushAlert = payload => {
-        const pl = [...state.alerts, payload]
+    const setAlerts = payload => {
         dispatch({
             type: PUSH_ALERT,
-            payload: pl
+            payload: payload
         })
     }
 
-    const setClient = state => {
+    const setClient = st => {
         dispatch({
             type: SET_CLIENT_STATE,
-            payload: state
+            payload: st
         })
     }
 
@@ -68,7 +71,7 @@ const GlobalState = props => {
             setIsAuthenticated,
             setSignupProcess,
             setClient,
-            pushAlert,
+            setAlerts,
             setLoading,
             loading: state.loading
 
