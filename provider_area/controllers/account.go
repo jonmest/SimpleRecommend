@@ -184,23 +184,34 @@ func RequestVerifyEmail(c *fiber.Ctx) {
 
 	// email := user.Email
 
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["username"] = user.Username
-	claims["email"] = user.Email
-	claims["user_id"] = user.ID
-	claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
-	t, err := token.SignedString([]byte(config.Config("SECRET")))
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": user.Username,
+		"user_id":  user.ID,
+		"email":    user.Email,
+		"expires":  time.Now().Add(time.Hour * 24).Unix(),
+	})
+	tokenString, err := token.SignedString([]byte(os.Getenv("jwt_secret")))
+
+	if err != nil {
+		c.SendStatus(500)
+		return
+	}
+	// claims := token.Claims.(jwt.MapClaims)
+	// claims["username"] = user.Username
+	// claims["email"] = user.Email
+	// claims["user_id"] = user.ID
+	// claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
+	// t, err := token.SignedString([]byte(config.Config("jwt_secret")))
 
 	from := mail.NewEmail("Example User", "contrarianandfree@gmail.com")
 	subject := "Sending with Twilio SendGrid is Fun"
 	to := mail.NewEmail("Example User", "jonmester3@gmail.com")
 	plainTextContent := "and easy to do anywhere, even with Go"
-	htmlContent := "<strong>and easy to do anywhere, even with Go</strong>. <a href='localhost:3001/verify-email-token/'" + t + ">Click here to verify.</a>"
+	htmlContent := "<strong>and easy to do anywhere, even with Go</strong>. <a href='localhost:3001/verify-email-token/'" + tokenString + ">Click here to verify.</a>"
 	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
 	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
 	response, err := client.Send(message)
-
+	fmt.Println(tokenString)
 	if err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Not valid user", "data": err})
 		return
@@ -221,14 +232,18 @@ func VerifyEmailWithToken(c *fiber.Ctx) {
 	}
 
 	token, err := jwt.Parse(input.Token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.Config(os.Getenv("jwt_secret"))), nil
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(os.Getenv("jwt_secret")), nil
 	})
+	claims, _ := token.Claims.(jwt.MapClaims)
+
 	if err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token.", "data": err})
 		return
 	}
 
-	claims := token.Claims.(jwt.MapClaims)
 	email := claims["email"].(string)
 	id := claims["user_id"].(float64)
 
