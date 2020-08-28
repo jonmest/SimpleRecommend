@@ -37,6 +37,7 @@ func main() {
 	account.Delete("/", mymw.Protected(), controllers.DeleteAccount)
 	account.Get("/statistics", mymw.Protected(), controllers.GetStats)
 	account.Post("/session", mymw.Protected(), controllers.HandleCreateSession)
-
+	app.Post("/verify-email", mymw.Protected(), controllers.RequestVerifyEmail)
+	app.Post("/verify-email-token", controllers.VerifyEmailWithToken)
 	app.Listen(8080)
 }

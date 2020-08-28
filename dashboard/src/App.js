@@ -4,6 +4,8 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Login from './components/pages/auth/Login'
 import Navbar from './components/layouts/Navbar'
 import SignUpWizard from './components/pages/SignUp/SignUpWizard'
+import VerifyEmail from './components/pages/SignUp/VerifyEmail'
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -31,6 +33,8 @@ function App() {
 
             <Route exact path='/login' component={Login} />
             <Route exact path='/register' component={SignUpWizard} />
+            <Route path='/verify-email-token/:token' component={VerifyEmail} />
+
             <ProtectedRoute exact path='/success' component={SuccessComponent} />
             <ProtectedRoute path='/account' component={Account} />
           </Switch>

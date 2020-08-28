@@ -1,12 +1,17 @@
 package controllers
 
 import (
+	"fmt"
+	"os"
 	"provider-area/config"
 	"provider-area/db"
 	"provider-area/models"
 	"provider-area/models/forms"
 	util "provider-area/utils"
 	"time"
+
+	"github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber"
@@ -169,4 +174,65 @@ func DeleteAccount(c *fiber.Ctx) {
 	db.Delete(&user)
 
 	c.JSON(fiber.Map{"status": "success", "message": "User successfully deleted", "data": nil})
+}
+
+func RequestVerifyEmail(c *fiber.Ctx) {
+	id := util.GetUserIdFromToken(c)
+	db := db.DB
+	var user models.Provider
+	db.First(&user, id)
+
+	// email := user.Email
+
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["username"] = user.Username
+	claims["email"] = user.Email
+	claims["user_id"] = user.ID
+	claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
+	t, err := token.SignedString([]byte(config.Config("SECRET")))
+
+	from := mail.NewEmail("Example User", "contrarianandfree@gmail.com")
+	subject := "Sending with Twilio SendGrid is Fun"
+	to := mail.NewEmail("Example User", "jonmester3@gmail.com")
+	plainTextContent := "and easy to do anywhere, even with Go"
+	htmlContent := "<strong>and easy to do anywhere, even with Go</strong>. <a href='localhost:3001/verify-email-token/'" + t + ">Click here to verify.</a>"
+	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
+	response, err := client.Send(message)
+
+	if err != nil {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Not valid user", "data": err})
+		return
+	}
+	fmt.Println(response.Body)
+	c.SendStatus(200)
+	return
+}
+
+func VerifyEmailWithToken(c *fiber.Ctx) {
+	type TokenInput struct {
+		Token string `json:"token"`
+	}
+	var input TokenInput
+	if err := c.BodyParser(&input); err != nil {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
+		return
+	}
+
+	token, err := jwt.Parse(input.Token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(config.Config(os.Getenv("jwt_secret"))), nil
+	})
+	if err != nil {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid token.", "data": err})
+		return
+	}
+
+	claims := token.Claims.(jwt.MapClaims)
+	email := claims["email"].(string)
+	id := claims["user_id"].(float64)
+
+	var user models.Provider
+	db.DB.Model(&user).Where("email = ? AND id = ?", email, id).Update("verified_email", true)
+	c.SendStatus(200)
 }

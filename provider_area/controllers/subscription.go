@@ -11,6 +11,7 @@ import (
 func HandleCreateSession(c *fiber.Ctx) {
 	var req struct {
 		PriceID string `json:"priceId"`
+		Email   string `json:"email"`
 	}
 	if err := c.BodyParser(&req); err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review input", "data": err})
@@ -20,6 +21,7 @@ func HandleCreateSession(c *fiber.Ctx) {
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 
 	params := &stripe.CheckoutSessionParams{
+		CustomerEmail: &req.Email,
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),
