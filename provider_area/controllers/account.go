@@ -143,8 +143,8 @@ func UpdateUser(c *fiber.Ctx) {
 	db := db.DB
 	var user models.Provider
 	db.First(&user, id)
-	user.Max_Rating = input.MaxRating
-	user.Min_Rating = input.MinRating
+	user.MaxRating = input.MaxRating
+	user.MinRating = input.MinRating
 	user.Domain = input.Domain
 	db.Save(&user)
 

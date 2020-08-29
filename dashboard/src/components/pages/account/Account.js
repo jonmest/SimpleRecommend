@@ -12,7 +12,7 @@ const selections = {
 
 const Account = ({ state }) => {
     const globalState = useContext(GlobalContext)
-
+    const { domain, max_rating, min_rating } = globalState.client
     const [selected, setSelected] = useState(selections.DASHBOARD)
 
     const handleClick = e => {
@@ -43,7 +43,9 @@ const Account = ({ state }) => {
                                         "active" : ""} id={selections.DASHBOARD} onClick={handleClick} >Dashboard</a></li>
                                 <li><a class={
                                     (selected == selections.REC_SETTINGS) ?
-                                        "active" : ""} id={selections.REC_SETTINGS} onClick={handleClick} >Recommendation Settings</a></li>
+                                        "active" : ""} id={selections.REC_SETTINGS} onClick={handleClick} >
+                                            Recommendation Settings { (domain === "" || max_rating === min_rating) && <span class="tag is-danger">Action Required</span> } 
+                                            </a></li>
                                 <li><a class={
                                     (selected == selections.ACCOUNT_SETTINGS) ?
                                         "active" : ""} id={selections.ACCOUNT_SETTINGS} onClick={handleClick} >Account</a></li>

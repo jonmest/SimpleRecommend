@@ -69,8 +69,8 @@ func Login(c *fiber.Ctx) {
 			Email:      user.Email,
 			Plan:       user.Plan,
 			Active:     user.Active,
-			Max_Rating: user.Max_Rating,
-			Min_Rating: user.Min_Rating,
+			Max_Rating: user.MaxRating,
+			Min_Rating: user.MinRating,
 			Domain:     user.Domain,
 		}
 	} else {
@@ -80,8 +80,8 @@ func Login(c *fiber.Ctx) {
 			Email:      email.Email,
 			Plan:       email.Plan,
 			Active:     email.Active,
-			Max_Rating: email.Max_Rating,
-			Min_Rating: email.Min_Rating,
+			Max_Rating: email.MaxRating,
+			Min_Rating: email.MinRating,
 			Domain:     email.Domain,
 		}
 	}

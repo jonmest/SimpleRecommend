@@ -14,7 +14,7 @@ const AlertBar = () => {
                 newAlerts["inactive"] = {
                     id: "inactive",
                     type: "danger",
-                    message: "Your account is not active. Complete payment or confirm email to start generating recommendations. Contact support if problem persists."
+                    message: "Your account is not active. Complete payment if you have not, or wait a few minutes. Contact support if problem persists."
                 }
             }
             if (domain === "") {
@@ -29,7 +29,7 @@ const AlertBar = () => {
                 newAlerts["badRatings"] = {
                     id: "badRatings",
                     type: "danger",
-                    message: "You have set invalid maximum and minimum ratings. They can not have the same value. Read the documentation for further advice."
+                    message: "You have currently have invalid maximum and minimum ratings set. They can not have the same value. Read the documentation for further advice."
                 }
             }
 

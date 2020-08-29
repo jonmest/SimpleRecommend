@@ -29,7 +29,10 @@ export default (state, action) => {
         case PUSH_ALERT:
             return {
                 ...state,
-                alerts: action.payload
+                alerts: {
+                    ...state.alerts,
+                    ...action.payload
+                }
             }
         case SET_LOADING:
             return {

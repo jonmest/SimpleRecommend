@@ -5,6 +5,8 @@ import GlobalContext from '../../../context/global/GlobalContext'
 
 const VerifyEmail = () => {
     const { token } = useParams()
+    const globalState = useContext(GlobalContext)
+    const { setAlerts } = globalState
 
     useEffect(() => {
         fetch(process.env.REACT_APP_PROVIDER_API_URL + '/verify-email-token', {
@@ -16,12 +18,37 @@ const VerifyEmail = () => {
                 token: token
             })
         })
-            .then(res => res.json())
-            .then(data => console.log(data))
+            .then(res => {
+                if (res.ok) {
+                    return
+                } else throw new Error("Could not validate and verify token.")
+            })
+            .then(() => {
+                debugger
+                setAlerts({
+                    "verifiedToken": {
+                        id: "verifiedToken",
+                        type: "success",
+                        message: "You successfully verified your email address!"
+    
+                    }
+                })
+            })
+            .catch(error => {
+                console.log(error)
+                setAlerts({
+                    "vailedToVerifyEmail": {
+                        id: "vailedToVerifyEmail",
+                        type: "danger",
+                        message: "You failed to verify your email address. Try again later."
+    
+                    }
+                })
+            })
     }, [])
 
     return (
-        null
+        <Redirect to="/account" />
     )
 }
 

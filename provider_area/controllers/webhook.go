@@ -36,7 +36,7 @@ func WebHook(c *fiber.Ctx) {
 
 		fmt.Println(cus.Email)
 		provider := models.Provider{}
-		db.DB.Model(&provider).Where("email = ?", cus.Email).Update(models.Provider{Active: true, StripeCustomerId: stripeCustomerId, SubscriptionId: stripeSubID})
+		db.DB.Model(&provider).Where("email = ?", cus.Email).Update(models.Provider{Active: true, StripeCustomerID: stripeCustomerId, SubscriptionID: stripeSubID})
 		c.SendStatus(200)
 		return
 
