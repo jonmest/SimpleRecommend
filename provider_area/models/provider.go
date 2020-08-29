@@ -16,4 +16,6 @@ type Provider struct {
 	MinRating        float64 `gorm:"type:real" json:"min_rating"`
 	Domain           string  `gorm:"type:text" json:"domain"`
 	VerifiedEmail    bool    `gorm:"type:boolean" json:"verified"`
+	ApiKey           string  `gorm:"type:text" json:"api_key"`
+	ApiKeyRequired   bool    `gorm:"type:boolean" json:"api_key_required"`
 }

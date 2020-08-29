@@ -128,14 +128,25 @@ func CreateAccount(c *fiber.Ctx) {
 
 func UpdateUser(c *fiber.Ctx) {
 	type UpdateUserInput struct {
-		MaxRating float64 `json:"max_rating"`
-		MinRating float64 `json:"min_rating"`
-		Domain    string  `json:"domain"`
+		MaxRating      float64 `json:"max_rating"`
+		MinRating      float64 `json:"min_rating"`
+		Domain         string  `json:"domain"`
+		NewApiKey      bool    `json:"new_key"`
+		ApiKeyRequired bool    `json:"api_key_required"`
 	}
 	var input UpdateUserInput
 	if err := c.BodyParser(&input); err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
 		return
+	}
+
+	var apiKey string
+	var err error
+	if input.NewApiKey {
+		if apiKey, err = util.GenerateRandomString(70); err != nil {
+			c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": "Failed to generate API key."})
+			return
+		}
 	}
 
 	id := util.GetUserIdFromToken(c)
@@ -146,6 +157,11 @@ func UpdateUser(c *fiber.Ctx) {
 	user.MaxRating = input.MaxRating
 	user.MinRating = input.MinRating
 	user.Domain = input.Domain
+
+	if input.NewApiKey {
+		user.ApiKey = apiKey
+	}
+	user.ApiKeyRequired = input.ApiKeyRequired
 	db.Save(&user)
 
 	c.JSON(fiber.Map{"status": "success", "message": "User successfully updated", "data": user})
