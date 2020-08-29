@@ -21,5 +21,6 @@ require (
 	github.com/stripe/stripe-go v70.15.0+incompatible
 	github.com/stripe/stripe-go/v71 v71.47.0
 	github.com/twinj/uuid v1.0.0
+	go.mongodb.org/mongo-driver v1.4.0
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
 )
