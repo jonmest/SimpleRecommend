@@ -18,14 +18,14 @@ func Login(c *fiber.Ctx) {
 	}
 	var input LoginInput
 	type UserData struct {
-		ID         uint    `json:"id"`
-		Username   string  `json:"username"`
-		Email      string  `json:"email"`
-		Plan       string  `json:"plan"`
-		Active     bool    `json:"active"`
-		Max_Rating float64 `json:"max_rating"`
-		Min_Rating float64 `json:"min_rating"`
-		Domain     string  `json:"domain"`
+		ID         uint     `json:"id"`
+		Username   string   `json:"username"`
+		Email      string   `json:"email"`
+		Plan       string   `json:"plan"`
+		Active     bool     `json:"active"`
+		Max_Rating float64  `json:"max_rating"`
+		Min_Rating float64  `json:"min_rating"`
+		Hostnames  []string `json:"domain"`
 	}
 	var ud UserData
 
@@ -71,7 +71,7 @@ func Login(c *fiber.Ctx) {
 			Active:     user.Active,
 			Max_Rating: user.MaxRating,
 			Min_Rating: user.MinRating,
-			Domain:     user.Domain,
+			Hostnames:  user.Hostnames,
 		}
 	} else {
 		ud = UserData{
@@ -82,7 +82,7 @@ func Login(c *fiber.Ctx) {
 			Active:     email.Active,
 			Max_Rating: email.MaxRating,
 			Min_Rating: email.MinRating,
-			Domain:     email.Domain,
+			Hostnames:  email.Hostnames,
 		}
 	}
 

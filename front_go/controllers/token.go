@@ -36,13 +36,24 @@ func Token(c *fiber.Ctx) {
 		return
 	}
 
+	var provider models.Provider
+	db.DB.Where("username = ?", input.Provider).First(&provider)
+
+	var authorized bool = IsAuthorizedOrigin(c, provider)
+	if !authorized {
+		c.Status(401).JSON(fiber.Map{
+			"message": "You sent a request from a non-whitelisted hostname.",
+		})
+		return
+	}
+
 	token, err := generateRandomString(32)
 	if err != nil {
-		c.Status(500).JSON(fiber.Map{"error": "Failed to create token."})
+		c.Status(500).JSON(fiber.Map{"message": "Failed to create token."})
 		return
 	}
 
 	actor := models.Actor{ID: token, Provider: input.Provider}
 	db.DB.Create(&actor)
-	c.Status(200).JSON(fiber.Map{"token": token})
+	c.Status(200).JSON(fiber.Map{"actor_token": token})
 }

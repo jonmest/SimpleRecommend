@@ -19,15 +19,27 @@ func jsonEscape(i string) string {
 }
 
 func GetRecommendations(c *fiber.Ctx) {
-	provider := c.Query("provider")
+	provider_username := c.Query("provider")
 	actor := c.Query("actor")
 
-	if provider == "" || actor == "" {
+	if provider_username == "" || actor == "" {
 		c.Status(500).JSON(fiber.Map{"error": "Must supply provider and actor query parameters."})
 		return
 	}
+
+	var provider models.Provider
+	db.DB.Where("username = ?", provider_username).First(&provider)
+
+	var authorized bool = IsAuthorizedOrigin(c, provider)
+	if !authorized {
+		c.Status(401).JSON(fiber.Map{
+			"message": "You sent a request from a non-whitelisted origin.",
+		})
+		return
+	}
+
 	var recommendation models.Recommendation
-	db.DB.Raw("SELECT * FROM recommendations WHERE actor = ? AND provider = ? ORDER BY created DESC LIMIT 1", actor, provider).Scan(&recommendation)
+	db.DB.Raw("SELECT * FROM recommendations WHERE actor = ? AND provider = ? ORDER BY created DESC LIMIT 1", actor, provider_username).Scan(&recommendation)
 	// db.DB.Order("created").Where("actor = ? AND provider = ?", actor, provider).Find(&recommendation)
 	// last := len(recommendation) - 1
 	var items []string

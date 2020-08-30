@@ -13,6 +13,18 @@ import (
 
 var ctx = context.Background()
 
+func IsAuthorizedOrigin(c *fiber.Ctx, provider models.Provider) bool {
+	hostname := c.Hostname()
+	ip := c.IP()
+	var authorized bool = false
+	for _, s := range provider.Hostnames {
+		if s == hostname || s == ip {
+			authorized = true
+		}
+	}
+	return authorized
+}
+
 type EventInput struct {
 	Type     string  `json:"type" binding:"required"`
 	Actor    string  `json:"actor" binding:"required"`
@@ -27,6 +39,17 @@ func SaveEvent(c *fiber.Ctx) {
 	if err := c.BodyParser(input); err != nil {
 		c.Status(500).JSON(fiber.Map{
 			"error": err.Error(),
+		})
+		return
+	}
+
+	var provider models.Provider
+	db.DB.Where("username = ?", input.Provider).First(&provider)
+
+	var authorized bool = IsAuthorizedOrigin(c, provider)
+	if !authorized {
+		c.Status(401).JSON(fiber.Map{
+			"message": "You sent a request from a non-whitelisted origin.",
 		})
 		return
 	}

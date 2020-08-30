@@ -45,17 +45,17 @@ func CreateAccount(c *fiber.Ctx) {
 	db := db.DB
 	input := *new(forms.Provider)
 	if err := c.BodyParser(&input); err != nil {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Invalid JSON input."})
+		c.Status(400).JSON(fiber.Map{"status": "error", "message": "Invalid JSON input."})
 		return
 	}
 
 	// Validation
 	if input.Email == "" || input.Username == "" {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Username and email required."})
+		c.Status(400).JSON(fiber.Map{"status": "error", "message": "Username and email required."})
 		return
 	}
 	if len(input.Password) < MIN_PWD_LEN {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Password too short. Minimum is 7 characters."})
+		c.Status(400).JSON(fiber.Map{"status": "error", "message": "Password too short. Minimum is 7 characters."})
 		return
 	}
 
@@ -67,13 +67,13 @@ func CreateAccount(c *fiber.Ctx) {
 
 	not_taken_email := db.Where("email = ?", input.Email).First(&models.Provider{}).RecordNotFound()
 	if !not_taken_email {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": "Email is taken. Try logging in or using a different email."})
+		c.Status(400).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": "Email is taken. Try logging in or using a different email."})
 		return
 	}
 
 	not_taken_username := db.Where("username = ?", input.Username).First(&models.Provider{}).RecordNotFound()
 	if !not_taken_username {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": "Username is taken. Try logging in or using a different username."})
+		c.Status(400).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": "Username is taken. Try logging in or using a different username."})
 		return
 	}
 
@@ -83,9 +83,10 @@ func CreateAccount(c *fiber.Ctx) {
 		Active:       false,
 		Email:        input.Email,
 		PasswordHash: hash,
+		Hostnames:    []string{},
 	}
 	if err := db.Create(&account).Error; err != nil {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": err})
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": nil})
 		return
 	}
 
@@ -128,25 +129,14 @@ func CreateAccount(c *fiber.Ctx) {
 
 func UpdateUser(c *fiber.Ctx) {
 	type UpdateUserInput struct {
-		MaxRating      float64 `json:"max_rating"`
-		MinRating      float64 `json:"min_rating"`
-		Domain         string  `json:"domain"`
-		NewApiKey      bool    `json:"new_key"`
-		ApiKeyRequired bool    `json:"api_key_required"`
+		MaxRating float64  `json:"max_rating"`
+		MinRating float64  `json:"min_rating"`
+		Hostnames []string `json:"hostnames"`
 	}
 	var input UpdateUserInput
 	if err := c.BodyParser(&input); err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
 		return
-	}
-
-	var apiKey string
-	var err error
-	if input.NewApiKey {
-		if apiKey, err = util.GenerateRandomString(70); err != nil {
-			c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": "Failed to generate API key."})
-			return
-		}
 	}
 
 	id := util.GetUserIdFromToken(c)
@@ -156,12 +146,8 @@ func UpdateUser(c *fiber.Ctx) {
 	db.First(&user, id)
 	user.MaxRating = input.MaxRating
 	user.MinRating = input.MinRating
-	user.Domain = input.Domain
+	user.Hostnames = input.Hostnames
 
-	if input.NewApiKey {
-		user.ApiKey = apiKey
-	}
-	user.ApiKeyRequired = input.ApiKeyRequired
 	db.Save(&user)
 
 	c.JSON(fiber.Map{"status": "success", "message": "User successfully updated", "data": user})
@@ -212,12 +198,6 @@ func RequestVerifyEmail(c *fiber.Ctx) {
 		c.SendStatus(500)
 		return
 	}
-	// claims := token.Claims.(jwt.MapClaims)
-	// claims["username"] = user.Username
-	// claims["email"] = user.Email
-	// claims["user_id"] = user.ID
-	// claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
-	// t, err := token.SignedString([]byte(config.Config("jwt_secret")))
 
 	from := mail.NewEmail("Example User", "contrarianandfree@gmail.com")
 	subject := "Sending with Twilio SendGrid is Fun"
