@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"raas.com/api/v1/utils"
 
 	"github.com/gofiber/fiber"
 	"github.com/gofiber/fiber/middleware"
@@ -18,6 +19,18 @@ func main() {
 		TimeFormat: "15:04:05",
 		Output:     os.Stdout,
 	}))
+
+	app.Use(func(c *fiber.Ctx) {
+		apiKey := c.Get("Api-Key")
+		payload, err := utils.DecryptAPIToken(apiKey)
+		if err != nil {
+			c.Status(401).JSON(fiber.Map{
+				"message": "You provided an invalid API key.",
+			})
+		}
+		c.Locals("providerPayload", payload)
+		c.Next()
+	})
 
 	db.ConnectDatabase()
 
