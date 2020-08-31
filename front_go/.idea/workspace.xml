@@ -2,13 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fc5590db-d0dc-4c2f-bb1e-d0291a560695" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/utils/crypto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/event.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/event.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/recommendations.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/recommendations.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/token.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/provider.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/provider.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../provider_area/controllers/account.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/controllers/account.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../provider_area/controllers/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/controllers/auth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../provider_area/controllers/stats.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/controllers/stats.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../provider_area/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../provider_area/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../provider_area/models/provider.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/models/provider.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../provider_area/utils/account.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/utils/account.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../provider_area/utils/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/utils/auth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../provider_area/utils/crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/utils/crypto.go" afterDir="false" />
@@ -32,6 +37,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
@@ -45,5 +51,15 @@
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="836" y="196" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1598903512225">
+      <screen x="0" y="31" width="1920" height="1016" />
+    </state>
+    <state x="836" y="196" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.31.1920.1016@0.31.1920.1016" timestamp="1598903512225" />
+    <state x="1223" y="296" width="424" height="481" key="FileChooserDialogImpl" timestamp="1598906523669">
+      <screen x="0" y="31" width="1920" height="1016" />
+    </state>
+    <state x="1223" y="296" width="424" height="481" key="FileChooserDialogImpl/0.31.1920.1016@0.31.1920.1016" timestamp="1598906523669" />
   </component>
 </project>

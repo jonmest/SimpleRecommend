@@ -52,9 +52,8 @@ func ValidToken(t *jwt.Token, id string) bool {
 }
 
 func ValidUser(id string, p string) bool {
-	db := db.DB
 	var user models.Provider
-	db.First(&user, id)
+	db.DB.First(&user, id)
 	fmt.Printf("%+v\n", user)
 	if !CheckPasswordHash(p, user.PasswordHash) {
 		return false

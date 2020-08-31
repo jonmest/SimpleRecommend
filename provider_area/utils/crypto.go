@@ -64,8 +64,8 @@ func GenerateAPIToken(username string, email string) (string, error) {
 	ciphertext := aesgcm.Seal(nil, nonce, encoded, nil)
 
 	// Return a hex string with the 24 last characters being the nonce
-	total_ciphertext := hex.EncodeToString(ciphertext) + nonceString
-	return total_ciphertext, nil
+	totalCiphertext := hex.EncodeToString(ciphertext) + nonceString
+	return totalCiphertext, nil
 }
 
 func DecryptAPIToken(token string) (Payload, error) {

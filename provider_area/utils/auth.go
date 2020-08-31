@@ -25,9 +25,8 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 func GetUserByEmail(e string) (*models.Provider, error) {
-	db := db.DB
 	var user models.Provider
-	if err := db.Where(&models.Provider{Email: e}).Find(&user).Error; err != nil {
+	if err := db.DB.Where(&models.Provider{Email: e}).Find(&user).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, nil
 		}
@@ -37,9 +36,8 @@ func GetUserByEmail(e string) (*models.Provider, error) {
 }
 
 func GetUserByUsername(u string) (*models.Provider, error) {
-	db := db.DB
 	var user models.Provider
-	if err := db.Where(&models.Provider{Username: u}).Find(&user).Error; err != nil {
+	if err := db.DB.Where(&models.Provider{Username: u}).Find(&user).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, nil
 		}

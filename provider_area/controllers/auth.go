@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"provider-area/config"
 	"provider-area/models"
 	util "provider-area/utils"
@@ -23,8 +24,8 @@ func Login(c *fiber.Ctx) {
 		Email      string   `json:"email"`
 		Plan       string   `json:"plan"`
 		Active     bool     `json:"active"`
-		Max_Rating float64  `json:"max_rating"`
-		Min_Rating float64  `json:"min_rating"`
+		MaxRating float64  `json:"max_rating"`
+		MinRating float64  `json:"min_rating"`
 		Hostnames  []string `json:"domain"`
 	}
 	var ud UserData
@@ -62,27 +63,32 @@ func Login(c *fiber.Ctx) {
 		return
 	}
 
+
 	if email == nil {
+		var hostnames []string
+		json.Unmarshal([]byte(user.Hostnames), &hostnames)
 		ud = UserData{
 			ID:         user.ID,
 			Username:   user.Username,
 			Email:      user.Email,
 			Plan:       user.Plan,
 			Active:     user.Active,
-			Max_Rating: user.MaxRating,
-			Min_Rating: user.MinRating,
-			Hostnames:  user.Hostnames,
+			MaxRating: user.MaxRating,
+			MinRating: user.MinRating,
+			Hostnames:  hostnames,
 		}
 	} else {
+		var hostnames []string
+		json.Unmarshal([]byte(email.Hostnames), &hostnames)
 		ud = UserData{
 			ID:         email.ID,
 			Username:   email.Username,
 			Email:      email.Email,
 			Plan:       email.Plan,
 			Active:     email.Active,
-			Max_Rating: email.MaxRating,
-			Min_Rating: email.MinRating,
-			Hostnames:  email.Hostnames,
+			MaxRating: email.MaxRating,
+			MinRating: email.MinRating,
+			Hostnames:  hostnames,
 		}
 	}
 

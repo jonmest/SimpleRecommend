@@ -26,35 +26,34 @@ func GetStats(c *fiber.Ctx) {
 	}
 
 	id := util.GetUserIdFromToken(c)
-	db := db.DB
 
 	var user models.Provider
-	db.Find(&user, id)
+	db.DB.Find(&user, id)
 	if user.Username == "" {
 		c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Unauthorized request. Must provide a valid token in authorization header."})
 		return
 	}
 
 	// Unique users last 30 days
-	var dateString string = get30DaysBackString()
+	dateString := get30DaysBackString()
 	var uniqueActorsLastMonth struct {
 		Count uint
 	}
-	db.Raw("SELECT COUNT(DISTINCT actor) FROM events WHERE provider = ? AND created_at >= TO_DATE(?,'YYYY/MM/DD HH24:MI:SS')", user.Username, dateString).Scan(&uniqueActorsLastMonth)
+	db.DB.Raw("SELECT COUNT(DISTINCT actor) FROM events WHERE provider = ? AND created_at >= TO_DATE(?,'YYYY/MM/DD HH24:MI:SS')", user.Username, dateString).Scan(&uniqueActorsLastMonth)
 
 	// Unique users total
 	var uniqueActorsTotal struct {
 		Count uint
 	}
-	db.Raw("SELECT COUNT(DISTINCT actor) FROM events WHERE provider = ?", user.Username).Scan(&uniqueActorsTotal)
+	db.DB.Raw("SELECT COUNT(DISTINCT actor) FROM events WHERE provider = ?", user.Username).Scan(&uniqueActorsTotal)
 
 	// Get Last error
 	var lastError models.Error
-	db.Raw("SELECT * FROM errors WHERE provider = ? ORDER BY created_at DESC LIMIT 1", user.Username).Scan(&lastError)
+	db.DB.Raw("SELECT * FROM errors WHERE provider = ? ORDER BY created_at DESC LIMIT 1", user.Username).Scan(&lastError)
 
 	var allErrors []models.Error
 	if c.Query("errors") == "all" {
-		db.Raw("SELECT * FROM errors WHERE provider = ?", user.Username).Scan(&allErrors)
+		db.DB.Raw("SELECT * FROM errors WHERE provider = ?", user.Username).Scan(&allErrors)
 	}
 
 	stats := Stats{

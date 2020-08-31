@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d2c71298-9d8d-475f-9a03-b8e82b01aba2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../front_go/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../front_go/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../front_go/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../front_go/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/account.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/account.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/stats.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/stats.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/provider.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/provider.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/account.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/account.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/crypto.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" path="/usr/lib/golang" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="ProjectId" id="1gsNaQfifvcisPOrf7oGniYqMP7" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../front_go" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="705" y="368" width="499" height="336" key="#Notifications" timestamp="1598899489026">
+      <screen x="0" y="31" width="1920" height="1016" />
+    </state>
+    <state x="705" y="368" width="499" height="336" key="#Notifications/0.31.1920.1016@0.31.1920.1016" timestamp="1598899489026" />
+    <state x="709" y="376" width="492" height="320" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1598899423932">
+      <screen x="0" y="31" width="1920" height="1016" />
+    </state>
+    <state x="709" y="376" width="492" height="320" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.31.1920.1016@0.31.1920.1016" timestamp="1598899423932" />
+    <state x="708" y="393" width="494" height="289" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1598900054030">
+      <screen x="0" y="31" width="1920" height="1016" />
+    </state>
+    <state x="708" y="393" width="494" height="289" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.31.1920.1016@0.31.1920.1016" timestamp="1598900054030" />
+    <state x="1223" y="296" width="424" height="481" key="FileChooserDialogImpl" timestamp="1598909738375">
+      <screen x="0" y="31" width="1920" height="1016" />
+    </state>
+    <state x="1223" y="296" width="424" height="481" key="FileChooserDialogImpl/0.31.1920.1016@0.31.1920.1016" timestamp="1598909738375" />
+    <state x="464" y="173" key="SettingsEditor" timestamp="1598899480943">
+      <screen x="0" y="31" width="1920" height="1016" />
+    </state>
+    <state x="464" y="173" key="SettingsEditor/0.31.1920.1016@0.31.1920.1016" timestamp="1598899480943" />
+  </component>
+</project>

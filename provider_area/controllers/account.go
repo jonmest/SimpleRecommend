@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"provider-area/config"
@@ -18,22 +19,45 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+//goland:noinspection GoSnakeCaseUsage
 const MIN_PWD_LEN int = 7
+type ProviderJson struct {
+	Username         string   `json:"username"`
+	Email            string   `json:"email"`
+	Plan             string   `json:"plan"`
+	Active           bool     `json:"active"`
+	MaxRating        float64  `json:"max_rating"`
+	MinRating        float64  `json:"min_rating"`
+	Hostnames        []string `json:"hostnames"`
+	VerifiedEmail    bool     `json:"verified"`
+}
 
 func GetUser(c *fiber.Ctx) {
 	id := util.GetUserIdFromToken(c)
-	db := db.DB
 
 	var user models.Provider
-	db.Find(&user, id)
+	db.DB.Find(&user, id)
 	if user.Username == "" {
 		c.Status(404).JSON(fiber.Map{"status": "error", "message": "No user found with ID", "data": nil})
 		return
 	}
 
-	c.JSON(fiber.Map{"status": "success", "message": "User found", "data": user})
+	var hostnames []string
+	json.Unmarshal([]byte(user.Hostnames), &hostnames)
+
+	c.JSON(fiber.Map{"status": "success", "message": "User found", "data": ProviderJson{
+		Username: user.Username,
+		Email: user.Email,
+		Hostnames: hostnames,
+		MinRating: user.MinRating,
+		MaxRating: user.MaxRating,
+		Plan: user.Plan,
+		Active: user.Active,
+		VerifiedEmail: user.VerifiedEmail,
+	}})
 }
 
+//goland:noinspection GoSnakeCaseUsage,GoSnakeCaseUsage
 func CreateAccount(c *fiber.Ctx) {
 	// To return in response
 	type NewAccount struct {
@@ -42,7 +66,6 @@ func CreateAccount(c *fiber.Ctx) {
 		Email    string `json:"email"`
 		Token    string `json:"token"`
 	}
-	db := db.DB
 	input := *new(forms.Provider)
 	if err := c.BodyParser(&input); err != nil {
 		c.Status(400).JSON(fiber.Map{"status": "error", "message": "Invalid JSON input."})
@@ -65,13 +88,13 @@ func CreateAccount(c *fiber.Ctx) {
 		return
 	}
 
-	not_taken_email := db.Where("email = ?", input.Email).First(&models.Provider{}).RecordNotFound()
+	not_taken_email := db.DB.Where("email = ?", input.Email).First(&models.Provider{}).RecordNotFound()
 	if !not_taken_email {
 		c.Status(400).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": "Email is taken. Try logging in or using a different email."})
 		return
 	}
 
-	not_taken_username := db.Where("username = ?", input.Username).First(&models.Provider{}).RecordNotFound()
+	not_taken_username := db.DB.Where("username = ?", input.Username).First(&models.Provider{}).RecordNotFound()
 	if !not_taken_username {
 		c.Status(400).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": "Username is taken. Try logging in or using a different username."})
 		return
@@ -83,9 +106,8 @@ func CreateAccount(c *fiber.Ctx) {
 		Active:       false,
 		Email:        input.Email,
 		PasswordHash: hash,
-		Hostnames:    []string{},
 	}
-	if err := db.Create(&account).Error; err != nil {
+	if err := db.DB.Create(&account).Error; err != nil {
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": nil})
 		return
 	}
@@ -107,7 +129,7 @@ func CreateAccount(c *fiber.Ctx) {
 	}
 
 	var u models.Provider
-	if err := db.Where(&models.Provider{Username: account.Username}).Find(&u).Error; err != nil {
+	if err := db.DB.Where(&models.Provider{Username: account.Username}).Find(&u).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			c.Status(500)
 			return
@@ -139,18 +161,32 @@ func UpdateUser(c *fiber.Ctx) {
 		return
 	}
 
+	hostnamesMarshaled, err := json.Marshal(input.Hostnames)
+	if err != nil {
+		c.Status(500).JSON(fiber.Map{"message": "Something went wrong."})
+		return
+	}
+	hostnamesString := string(hostnamesMarshaled)
+
 	id := util.GetUserIdFromToken(c)
 
-	db := db.DB
 	var user models.Provider
-	db.First(&user, id)
+	db.DB.First(&user, id)
 	user.MaxRating = input.MaxRating
 	user.MinRating = input.MinRating
-	user.Hostnames = input.Hostnames
+	user.Hostnames = hostnamesString
+	db.DB.Save(&user)
 
-	db.Save(&user)
-
-	c.JSON(fiber.Map{"status": "success", "message": "User successfully updated", "data": user})
+	c.JSON(fiber.Map{"status": "success", "message": "User successfully updated", "data": ProviderJson{
+		Username: user.Username,
+		Email: user.Email,
+		Hostnames: input.Hostnames,
+		MinRating: user.MinRating,
+		MaxRating: user.MaxRating,
+		Plan: user.Plan,
+		Active: user.Active,
+		VerifiedEmail: user.VerifiedEmail,
+	}})
 }
 
 func DeleteAccount(c *fiber.Ctx) {
@@ -170,19 +206,17 @@ func DeleteAccount(c *fiber.Ctx) {
 		return
 	}
 
-	db := db.DB
 	var user models.Provider
-	db.First(&user, id)
-	db.Delete(&user)
+	db.DB.First(&user, id)
+	db.DB.Delete(&user)
 
 	c.JSON(fiber.Map{"status": "success", "message": "User successfully deleted", "data": nil})
 }
 
 func RequestVerifyEmail(c *fiber.Ctx) {
 	id := util.GetUserIdFromToken(c)
-	db := db.DB
 	var user models.Provider
-	db.First(&user, id)
+	db.DB.First(&user, id)
 
 	// email := user.Email
 
@@ -229,7 +263,7 @@ func VerifyEmailWithToken(c *fiber.Ctx) {
 
 	token, err := jwt.Parse(input.Token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte(os.Getenv("jwt_secret")), nil
 	})

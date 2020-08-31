@@ -14,7 +14,7 @@ type Provider struct {
 	SubscriptionID   string   `gorm:"type:text" json:"-"`
 	MaxRating        float64  `gorm:"type:real" json:"max_rating"`
 	MinRating        float64  `gorm:"type:real" json:"min_rating"`
-	Hostnames        []string `gorm:"type:text[]" json:"domain"`
+	Hostnames        string `gorm:"type:text[]" json:"hostnames"`
 	VerifiedEmail    bool     `gorm:"type:boolean" json:"verified"`
 	ApiKey           string   `gorm:"type:text" json:"-"`
 	ApiKeyRequired   bool     `gorm:"type:boolean" json:"api_key_required"`

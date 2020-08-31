@@ -9,39 +9,21 @@ import (
 	"github.com/gofiber/fiber"
 )
 
-func jsonEscape(i string) string {
-	b, err := json.Marshal(i)
-	if err != nil {
-		panic(err)
-	}
-	s := string(b)
-	return s[1 : len(s)-1]
-}
-
 func GetRecommendations(c *fiber.Ctx) {
-	provider_username := c.Query("provider")
+	providerUsername := c.Query("provider")
 	actor := c.Query("actor")
 
-	if provider_username == "" || actor == "" {
+	if providerUsername == "" || actor == "" {
 		c.Status(500).JSON(fiber.Map{"error": "Must supply provider and actor query parameters."})
 		return
 	}
 
 	var provider models.Provider
-	db.DB.Where("username = ?", provider_username).First(&provider)
-
-	var authorized bool = IsAuthorizedOrigin(c, provider)
-	if !authorized {
-		c.Status(401).JSON(fiber.Map{
-			"message": "You sent a request from a non-whitelisted origin.",
-		})
-		return
-	}
+	db.DB.Where("username = ?", providerUsername).First(&provider)
 
 	var recommendation models.Recommendation
-	db.DB.Raw("SELECT * FROM recommendations WHERE actor = ? AND provider = ? ORDER BY created DESC LIMIT 1", actor, provider_username).Scan(&recommendation)
-	// db.DB.Order("created").Where("actor = ? AND provider = ?", actor, provider).Find(&recommendation)
-	// last := len(recommendation) - 1
+	db.DB.Raw("SELECT * FROM recommendations WHERE actor = ? AND provider = ? ORDER BY created DESC LIMIT 1", actor, providerUsername).Scan(&recommendation)
+
 	var items []string
 	json.Unmarshal([]byte(recommendation.Items), &items)
 	c.Status(200).JSON(fiber.Map{"items": items})
