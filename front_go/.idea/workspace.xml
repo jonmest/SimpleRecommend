@@ -2,19 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fc5590db-d0dc-4c2f-bb1e-d0291a560695" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/utils/origin.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/provider.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/provider.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/crypto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../provider_area/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../provider_area/controllers/account.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/controllers/account.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../provider_area/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../provider_area/models/provider.go" beforeDir="false" afterPath="$PROJECT_DIR$/../provider_area/models/provider.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
   </component>
   <component name="GOROOT" path="/usr/lib/golang" />
   <component name="Git.Settings">
@@ -31,6 +33,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />

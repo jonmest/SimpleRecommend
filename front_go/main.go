@@ -49,16 +49,27 @@ func main() {
 		json.Unmarshal([]byte(provider.Hostnames), &hostnames)
 
 		host := c.Hostname()
-		origin := c.Get("origin")
+		origin := c.Get(fiber.HeaderOrigin)
 		ipList := c.IPs()
 
+		fmt.Println(host)
+		fmt.Println(origin)
+		fmt.Println(ipList)
+		
 		for _, item := range hostnames {
 			if host == item || origin == item {
 				c.Next()
+				return
 			}
+			if utils.MatchSubdomain(origin, item) || utils.MatchSubdomain(host, item) {
+				c.Next()
+				return
+			}
+
 			for _, ip := range ipList {
 				if ip == item {
 					c.Next()
+					return
 				}
 			}
 		}
@@ -66,6 +77,7 @@ func main() {
 		c.Status(401).JSON(fiber.Map{
 			"message": "You sent a request from a non-whitelisted hostname.",
 		})
+		return
 	})
 
 
