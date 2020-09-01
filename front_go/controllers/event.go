@@ -15,7 +15,7 @@ import (
 var ctx = context.Background()
 
 type EventInput struct {
-	Type     string  `json:"type" binding:"required"`
+	Label    string  `json:"label"`
 	Actor    *string  `json:"actor" binding:"required"`
 	Item     *string  `json:"item" binding:"required"`
 	Data     *float64 `json:"data" binding:"required"`
@@ -25,7 +25,7 @@ type EventInput struct {
 func SaveEvent(c *fiber.Ctx) {
 	input := new(EventInput)
 	payload := c.Locals("providerPayload").(utils.Payload)
-	fmt.Println(payload.Username)
+
 	if err := c.BodyParser(input); err != nil {
 		c.Status(500).JSON(fiber.Map{
 			"message": "Failed to parse JSON input. Review the schema.",
@@ -50,7 +50,7 @@ func SaveEvent(c *fiber.Ctx) {
 	}
 
 	event := models.Event{
-		Type:     input.Type,
+		Label:     input.Label,
 		Actor:    *input.Actor,
 		Item:     *input.Item,
 		Data:     *input.Data,

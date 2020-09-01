@@ -4,7 +4,7 @@ import "github.com/jinzhu/gorm"
 
 type Event struct {
 	gorm.Model
-	Type     string
+	Label     string
 	Actor    string
 	Item     string
 	Data     float64
