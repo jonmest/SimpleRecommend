@@ -56,7 +56,7 @@ func SaveEvent(c *fiber.Ctx) {
 		Data:     *input.Data,
 		Provider: payload.Username,
 		}
-	fmt.Println(event)
+
 	db.DB.Create(&event)
 
 	key := fmt.Sprintf("is_active:%v_%v", payload.Username, event.Actor)

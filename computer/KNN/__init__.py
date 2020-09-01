@@ -39,10 +39,13 @@ class KNN_ItemBased:
 
     def get_recommendations(self, top_k=30):
         for actor in self.actors:
-            self.recommendations[actor] = []
-            actor_inner_id = self.trainset.to_inner_uid(actor)
-            actor_ratings = self.trainset.ur[actor_inner_id]
-            ratings_data =  [r[1] for r in actor_ratings]
+            try:
+                self.recommendations[actor] = []
+                actor_inner_id = self.trainset.to_inner_uid(actor)
+                actor_ratings = self.trainset.ur[actor_inner_id]
+                ratings_data =  [r[1] for r in actor_ratings]
+            except:
+                continue
 
             try:
                 mean_rating = statistics.mean(ratings_data)
