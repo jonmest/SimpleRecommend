@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"raas.com/api/v1/db"
 	"raas.com/api/v1/models"
@@ -31,8 +30,7 @@ func main() {
 			})
 			return
 		}
-		fmt.Println(payload)
-		fmt.Print(err)
+
 		c.Locals("providerPayload", payload)
 		c.Next()
 	})
@@ -51,11 +49,8 @@ func main() {
 		host := c.Hostname()
 		origin := c.Get(fiber.HeaderOrigin)
 		ipList := c.IPs()
+		remoteIp := c.IP()
 
-		fmt.Println(host)
-		fmt.Println(origin)
-		fmt.Println(ipList)
-		
 		for _, item := range hostnames {
 			if host == item || origin == item {
 				c.Next()
@@ -71,6 +66,11 @@ func main() {
 					c.Next()
 					return
 				}
+			}
+
+			if remoteIp == item {
+				c.Next()
+				return
 			}
 		}
 
