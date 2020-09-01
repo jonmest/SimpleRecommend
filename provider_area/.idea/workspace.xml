@@ -4,15 +4,12 @@
     <list default="true" id="d2c71298-9d8d-475f-9a03-b8e82b01aba2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../front_go/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../front_go/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../front_go/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../front_go/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../front_go/models/provider.go" beforeDir="false" afterPath="$PROJECT_DIR$/../front_go/models/provider.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../front_go/utils/crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/../front_go/utils/crypto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controllers/account.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/account.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/stats.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/stats.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/provider.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/provider.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/account.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/account.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/crypto.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +35,7 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../front_go" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
@@ -70,5 +67,9 @@
       <screen x="0" y="31" width="1920" height="1016" />
     </state>
     <state x="464" y="173" key="SettingsEditor/0.31.1920.1016@0.31.1920.1016" timestamp="1598899480943" />
+    <state x="1098" y="254" width="672" height="678" key="search.everywhere.popup" timestamp="1598955196236">
+      <screen x="0" y="31" width="1920" height="1016" />
+    </state>
+    <state x="1098" y="254" width="672" height="678" key="search.everywhere.popup/0.31.1920.1016@0.31.1920.1016" timestamp="1598955196236" />
   </component>
 </project>

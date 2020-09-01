@@ -32,6 +32,30 @@ type ProviderJson struct {
 	VerifiedEmail    bool     `json:"verified"`
 }
 
+func GetAPIKey(c *fiber.Ctx) {
+	type PasswordInput struct {
+		Password string `json:"password"`
+	}
+	var input PasswordInput
+	if err := c.BodyParser(&input); err != nil {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
+		return
+	}
+
+	id := util.GetUserIdFromToken(c)
+
+	if !util.ValidUser(id, input.Password) {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Not valid user", "data": nil})
+		return
+	}
+
+	var user models.Provider
+	db.DB.First(&user, id)
+	key := user.ApiKey
+	c.Status(200).JSON(fiber.Map{"data": key})
+	return
+}
+
 func GetUser(c *fiber.Ctx) {
 	id := util.GetUserIdFromToken(c)
 
@@ -100,14 +124,22 @@ func CreateAccount(c *fiber.Ctx) {
 		return
 	}
 
+	apiKey, err := util.GenerateAPIToken(input.Username, input.Email)
+	if err != nil {
+		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something went wrong."})
+		return
+	}
+
 	// Instantiate Provider struct and save in DB
 	account := models.Provider{
 		Username:     input.Username,
 		Active:       false,
 		Email:        input.Email,
 		PasswordHash: hash,
+		ApiKey: apiKey,
 	}
 	if err := db.DB.Create(&account).Error; err != nil {
+		fmt.Println(err)
 		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't create user", "data": nil})
 		return
 	}

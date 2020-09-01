@@ -6,6 +6,7 @@ import (
 	"crypto/cipher"
 	"encoding/gob"
 	"encoding/hex"
+	"errors"
 )
 
 
@@ -38,6 +39,10 @@ func DecryptAPIToken(token string) (Payload, error) {
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
 		return Payload{}, err
+	}
+
+	if len(token) <= 24 {
+		return Payload{}, errors.New("Invalid token.")
 	}
 
 	ciphertext, err := hex.DecodeString(token[:len(token)-24])

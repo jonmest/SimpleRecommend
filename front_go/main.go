@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"raas.com/api/v1/db"
 	"raas.com/api/v1/models"
@@ -28,13 +29,16 @@ func main() {
 			c.Status(401).JSON(fiber.Map{
 				"message": "You provided an invalid API key.",
 			})
+			return
 		}
+		fmt.Println(payload)
+		fmt.Print(err)
 		c.Locals("providerPayload", payload)
 		c.Next()
 	})
 
 	app.Use(func(c *fiber.Ctx) {
-		payload := c.Locals("providerPayload").(*utils.Payload)
+		payload := c.Locals("providerPayload").(utils.Payload)
 		var provider models.Provider
 		db.DB.Where(
 			"email = ? AND username = ?",
