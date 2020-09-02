@@ -1,10 +1,27 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
 import GlobalContext from '../../../context/global/GlobalContext'
 import Cookies from 'js-cookie'
+import { TagInput } from 'reactjs-tag-input'
+import { useAlert } from 'react-alert'
 
 const RecommendSettings = ({state}) => {   
   const globalState = useContext(GlobalContext)
-  const { domain, max_rating, min_rating } = globalState.client
+  const { hostnames, max_rating, min_rating } = globalState.client
+  const [tagState, setTagState] = useState([])
+  const [isTagSet, setIsTagSet] = useState(false)
+  const alert = useAlert()
+
+  useEffect(() => {
+    const tags = hostnames.map((item, index) => {
+      console.log(item)
+      return {
+        id: index,
+        displayValue: item
+      }
+    })
+    setTagState(tags)
+    setIsTagSet(true)
+  }, [])
 
   const handleChange = e => {
     const client = globalState.client
@@ -16,6 +33,14 @@ const RecommendSettings = ({state}) => {
     globalState.setClient(client)
   }
 
+  const onTagsChanged = tags => {
+    setTagState({tags})
+    globalState.setClient({
+      ...globalState.client,
+      hostnames: tags.map(item => item.displayValue)
+    })
+}
+
   const handleSubmit = e => {
     e.preventDefault()
     fetch(process.env.REACT_APP_PROVIDER_API_URL + '/account', {
@@ -25,11 +50,14 @@ const RecommendSettings = ({state}) => {
         'Authorization': 'Bearer ' + Cookies.get('token')
       },
       body: JSON.stringify({
-        max_rating, min_rating, domain
+        max_rating, min_rating, hostnames
       })})
       .then(res => res.json())
       .then(data => {
-        console.log(data)
+        alert.show('Settings saved!', {type: 'success'})
+      })
+      .catch(error => {
+        alert.show('Something went wrong.', {type: 'error'})
       })
   }
     return (
@@ -37,18 +65,29 @@ const RecommendSettings = ({state}) => {
         <section class="section">
           <div class="container">
           <form class="form-horizontal" onSubmit={handleSubmit} >
+
         <fieldset>
 
         <legend>Settings for recommendation generation</legend>
 
 
-        <div class="field">
-        <label class="label" for="textinput-0">Origin Domain</label>
+        <section class="section">
+          <div class="container">
+            <p class="title">Whitelisted Hostnames & IPs</p>
+          <p class="help">Enter the hostnames and IPs for the site you want to track. IE yourcompany.com or an IP address. This is required to prevent others from tampering with your user data. Only whitelisted hostnames are authorized to use the SimpleRecommend API.</p>
+<br/><br/>
+          <div class="field">
+
         <div class="control">
-            <input onChange={handleChange} id="textinput-0" name="domain" value={domain} type="text" placeholder="YourCompanySite.com" class="input " required/>
-            <p class="help">Enter the domain for the site you want to track. IE yourcompany.com. This is required to prevent others from tampering with your user data.</p>
+
+        {
+                  isTagSet && <TagInput tags={tagState} onTagsChanged={onTagsChanged} />
+        }
         </div>
         </div>
+            </div>      
+        </section>
+
 
 
         <div class="field">
