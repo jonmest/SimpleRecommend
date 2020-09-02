@@ -3,6 +3,7 @@ import GlobalContext from '../../../context/global/GlobalContext'
 import { useCookies } from 'react-cookie'
 import RecommendSettings from './RecommendSettings'
 import Dashboard from './Dashboard'
+import AccountSettings from './AccountSettings'
 
 const selections = {
     DASHBOARD: "DASHBOARD",
@@ -25,6 +26,8 @@ const Account = ({ state }) => {
                 return <Dashboard />
             case selections.REC_SETTINGS:
                 return <RecommendSettings />
+            case selections.ACCOUNT_SETTINGS:
+                return <AccountSettings/>
         }
     }
 

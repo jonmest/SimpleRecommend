@@ -5,6 +5,7 @@ import Login from './components/pages/auth/Login'
 import Navbar from './components/layouts/Navbar'
 import SignUpWizard from './components/pages/SignUp/SignUpWizard'
 import VerifyEmail from './components/pages/SignUp/VerifyEmail'
+import Start from './components/pages/start/Start'
 
 import {
   BrowserRouter as Router,
@@ -45,7 +46,7 @@ function App() {
           <Navbar />
           <AlertBar />
           <Switch>
-
+            <Route exact path='/' component={Start}/>
             <Route exact path='/login' component={Login} />
             <Route exact path='/register' component={SignUpWizard} />
             <Route path='/verify-email-token/:token' component={VerifyEmail} />

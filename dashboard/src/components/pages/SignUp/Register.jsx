@@ -1,12 +1,14 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
 import GlobalContext from '../../../context/global/GlobalContext'
 import { useCookies } from 'react-cookie'
+import { useAlert } from 'react-alert'
 
 const Register = ({ state }) => {
   const globalState = useContext(GlobalContext)
   const { username, email, password1, password2 } = globalState.signupProcess
   const [cookies, setCookie, removeCookie] = useCookies(['token'])
   const [error, setError] = useState("")
+  const alert = useAlert()
 
   useEffect(() => {
     globalState.setSignupProcess({
@@ -76,8 +78,7 @@ const Register = ({ state }) => {
           })
         })
         .catch(e => {
-          setError(e.message)
-          console.log(e)
+          alert.show(e.message, {type: 'error'})
         })
 
 

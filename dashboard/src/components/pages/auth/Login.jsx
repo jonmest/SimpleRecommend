@@ -41,36 +41,48 @@ const Login = props => {
 
   return (
     <Fragment>
-      <div class="container mt-5">
-
-        <div className="signup-form">
-          <form onSubmit={handleSubmit}>
-            <h2>Log in</h2>
-            <p className="hint-text">Have an account? Sign in now!</p>
-            <div className="form-group">
-              <div className="row">
-                <div className="col"><input type="text" className="form-control" name="identity" onChange={e => {
+      <div class="columns">
+        <div class="column"></div>
+        <div class="column is-half">
+          <span className="title">Log in</span>
+          <hr />
+          <div class="field">
+            <label class="label">Username or email</label>
+            <div class="control">
+              <input class="input"onChange={e => {
                   setIdentity(e.target.value)
-                }} placeholder="Username or email" required="required" /></div>
-              </div>
+                }} placeholder="Username or email" type="text" placeholder="Username" required="required" />
             </div>
-            <div className="form-group">
-              <input type="password" className="form-control" onChange={e => {
+          </div>
+          <div class="field">
+            <div className="control">
+              <label class="label">Password</label>
+              <input type="password" id="password1" className="input" onChange={e => {
                 setPassword(e.target.value)
-              }} name="password" placeholder="Password" required="required" />
+              }} name="password" placeholder="Password"required="required" />
             </div>
+          </div>
+          
+          <div class="field">
+            <div className="control">
+              <button class="button is-danger" onClick={handleSubmit} >Login Now</button>
 
-            <div className="form-group">
+            </div>
+          </div>
+          <div class="field">
+            <div className="control">
               {
                 error ?
-                  <p> {error} </p> :
+                  <p class="has-text-danger">{error}</p> :
                   null
               }
-              <button type="submit" className="btn btn-success btn-lg btn-block">Log In</button>
             </div>
-          </form>
+          </div>
         </div>
+        <div class="column"></div>
+
       </div>
+      
     </Fragment>
   )
 }
