@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect, useContext, } from 'react'
 import GlobalContext from './../../../context/global/GlobalContext'
 import Cookies from 'js-cookie'
 import { useHistory } from "react-router-dom";
+import { useAlert } from 'react-alert'
 
 const Login = props => {
   const history = useHistory();
@@ -14,6 +15,7 @@ const Login = props => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const globalState = useContext(GlobalContext)
+  const alert = useAlert()
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -34,9 +36,9 @@ const Login = props => {
           Cookies.set('token', data.token)
           history.push('/account')
           console.log("Logged in.")
-        }
+        } else throw new Error()
       })
-      .catch(e => setError(e.message))
+      .catch(e => alert.show('Something went wrong.', {type: 'error'}))
   }
 
   return (
