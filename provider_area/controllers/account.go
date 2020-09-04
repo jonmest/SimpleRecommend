@@ -21,15 +21,16 @@ import (
 
 //goland:noinspection GoSnakeCaseUsage
 const MIN_PWD_LEN int = 7
+
 type ProviderJson struct {
-	Username         string   `json:"username"`
-	Email            string   `json:"email"`
-	Plan             string   `json:"plan"`
-	Active           bool     `json:"active"`
-	MaxRating        float64  `json:"max_rating"`
-	MinRating        float64  `json:"min_rating"`
-	Hostnames        []string `json:"hostnames"`
-	VerifiedEmail    bool     `json:"verified"`
+	Username      string   `json:"username"`
+	Email         string   `json:"email"`
+	Plan          string   `json:"plan"`
+	Active        bool     `json:"active"`
+	MaxRating     float64  `json:"max_rating"`
+	MinRating     float64  `json:"min_rating"`
+	Hostnames     []string `json:"hostnames"`
+	VerifiedEmail bool     `json:"verified"`
 }
 
 func GetAPIKey(c *fiber.Ctx) {
@@ -45,7 +46,7 @@ func GetAPIKey(c *fiber.Ctx) {
 	id := util.GetUserIdFromToken(c)
 
 	if !util.ValidUser(id, input.Password) {
-		c.Status(500).JSON(fiber.Map{"status": "error", "message": "Not valid user", "data": nil})
+		c.Status(401).JSON(fiber.Map{"status": "error", "message": "Not valid user", "data": nil})
 		return
 	}
 
@@ -70,13 +71,13 @@ func GetUser(c *fiber.Ctx) {
 	json.Unmarshal([]byte(user.Hostnames), &hostnames)
 
 	c.JSON(fiber.Map{"status": "success", "message": "User found", "data": ProviderJson{
-		Username: user.Username,
-		Email: user.Email,
-		Hostnames: hostnames,
-		MinRating: user.MinRating,
-		MaxRating: user.MaxRating,
-		Plan: user.Plan,
-		Active: user.Active,
+		Username:      user.Username,
+		Email:         user.Email,
+		Hostnames:     hostnames,
+		MinRating:     user.MinRating,
+		MaxRating:     user.MaxRating,
+		Plan:          user.Plan,
+		Active:        user.Active,
 		VerifiedEmail: user.VerifiedEmail,
 	}})
 }
@@ -136,7 +137,7 @@ func CreateAccount(c *fiber.Ctx) {
 		Active:       false,
 		Email:        input.Email,
 		PasswordHash: hash,
-		ApiKey: apiKey,
+		ApiKey:       apiKey,
 	}
 	if err := db.DB.Create(&account).Error; err != nil {
 		fmt.Println(err)
@@ -210,13 +211,13 @@ func UpdateUser(c *fiber.Ctx) {
 	db.DB.Save(&user)
 
 	c.JSON(fiber.Map{"status": "success", "message": "User successfully updated", "data": ProviderJson{
-		Username: user.Username,
-		Email: user.Email,
-		Hostnames: input.Hostnames,
-		MinRating: user.MinRating,
-		MaxRating: user.MaxRating,
-		Plan: user.Plan,
-		Active: user.Active,
+		Username:      user.Username,
+		Email:         user.Email,
+		Hostnames:     input.Hostnames,
+		MinRating:     user.MinRating,
+		MaxRating:     user.MaxRating,
+		Plan:          user.Plan,
+		Active:        user.Active,
 		VerifiedEmail: user.VerifiedEmail,
 	}})
 }

@@ -14,6 +14,9 @@ import {
   } from "react-router-dom"
 
 const Start = ({ state }) => {
+    const globalState = useContext(GlobalContext)
+    const { isAuthenticated } = globalState.isAuthenticated
+
     return (
         <Fragment>
 
@@ -28,8 +31,15 @@ const Start = ({ state }) => {
                  <strong>  Use it to increase online sales, sign-ups and time spent on site.</strong>
             </h2>
             <div class="buttons">
-                <Link to="/register"><button class="button is-danger">Sign Up Now</button> </Link>
-                <Link to="/login" style={{marginLeft: "10px"}}><button class="button">Login</button></Link>
+                {
+                    (!Cookies.get('token')) ? <Fragment>
+                        <Link to="/register"><button class="button is-danger">Sign Up Now</button> </Link>
+                        <Link to="/login" style={{marginLeft: "10px"}}><button class="button">Login</button></Link>
+                    </Fragment> : <Fragment>
+                    <Link to="/account"><button class="button is-danger">Go to your account</button> </Link>
+                    </Fragment>
+                }
+                
             </div>
 
             </div>

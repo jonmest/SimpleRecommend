@@ -19,6 +19,7 @@ const Dashboard = ({ state }) => {
     }
 
     useEffect(() => {
+        
         fetch(process.env.REACT_APP_PROVIDER_API_URL + '/account/statistics?errors=all', {
             method: 'GET', mode: 'cors',
             headers: {
@@ -40,7 +41,7 @@ const Dashboard = ({ state }) => {
 
 
     return (
-        !statistics ?
+        !statistics  ?
             <Loader
                 type="Puff"
                 color="#00BFFF"

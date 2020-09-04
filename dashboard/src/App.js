@@ -6,7 +6,7 @@ import Navbar from './components/layouts/Navbar'
 import SignUpWizard from './components/pages/SignUp/SignUpWizard'
 import VerifyEmail from './components/pages/SignUp/VerifyEmail'
 import Start from './components/pages/start/Start'
-
+import Footer from './components/layouts/Footer'
 import {
   BrowserRouter as Router,
   Switch,
@@ -55,6 +55,7 @@ function App() {
             <ProtectedRoute path='/account' component={Account} />
           </Switch>
         </Router>
+        <Footer/>
         </AlertProvider>
       </GlobalState>
     </CookiesProvider>

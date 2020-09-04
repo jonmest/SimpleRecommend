@@ -13,7 +13,11 @@ import Cookies from 'js-cookie'
 const GlobalState = props => {
 
     const initialState = {
-        client: null,
+        client: {
+            domain: null,
+            max_rating: null,
+            min_rating: null
+        },
         signupProcess: null,
         isAuthenticated: false,
         loading: false,

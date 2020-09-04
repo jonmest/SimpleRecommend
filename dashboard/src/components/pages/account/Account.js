@@ -1,9 +1,11 @@
-import React, { Fragment, useState, useContext } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 import GlobalContext from '../../../context/global/GlobalContext'
 import { useCookies } from 'react-cookie'
 import RecommendSettings from './RecommendSettings'
 import Dashboard from './Dashboard'
 import AccountSettings from './AccountSettings'
+import { useAlert } from 'react-alert'
+import Cookies from 'js-cookie'
 
 const selections = {
     DASHBOARD: "DASHBOARD",
@@ -15,6 +17,7 @@ const Account = ({ state }) => {
     const globalState = useContext(GlobalContext)
     const { domain, max_rating, min_rating } = globalState.client
     const [selected, setSelected] = useState(selections.DASHBOARD)
+    const alert = useAlert()
 
     const handleClick = e => {
         setSelected(e.target.id)
@@ -30,6 +33,22 @@ const Account = ({ state }) => {
                 return <AccountSettings/>
         }
     }
+
+    useEffect(() => {
+        fetch(process.env.REACT_APP_PROVIDER_API_URL + '/account', {
+            method: 'get', mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + Cookies.get('token')
+            }
+          })
+            .then(res => res.json())
+            .then(data => {
+                globalState.setClient(data.data)
+            })
+            .catch(e => alert.show('Something went wrong.', {type: 'error'}))
+
+    }, [])
 
     return (
         <Fragment>

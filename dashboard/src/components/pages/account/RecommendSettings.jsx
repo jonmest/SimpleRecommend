@@ -13,7 +13,6 @@ const RecommendSettings = ({state}) => {
 
   useEffect(() => {
     const tags = hostnames.map((item, index) => {
-      console.log(item)
       return {
         id: index,
         displayValue: item

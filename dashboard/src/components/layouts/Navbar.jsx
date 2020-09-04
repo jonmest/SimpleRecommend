@@ -1,6 +1,14 @@
 import React, { Fragment, useState, useContext } from 'react'
 import GlobalContext from '../../context/global/GlobalContext'
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+
+} from "react-router-dom"
+
 const Navbar = props => {
   const globalState = useContext(GlobalContext)
   const { isAuthenticated, loading } = globalState
@@ -10,7 +18,8 @@ const Navbar = props => {
       <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
           <a class="navbar-item" href="/">
-            <p className="title">SimpleRecommend</p>
+            <p className="title">SimpleRecommend            <span className="is-size-7 has-text-weight-light">Alpha</span>
+</p>
           </a>
 
           <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -23,34 +32,17 @@ const Navbar = props => {
         <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-start">
             <a class="navbar-item">
+            <Link to="/">
               Home
-      </a>
+              </Link>
+            </a>
+            
 
             <a class="navbar-item">
               Documentation
-      </a>
+            </a>
 
-            <div class="navbar-item has-dropdown is-hoverable">
-              <a class="navbar-link">
-                More
-        </a>
-
-              <div class="navbar-dropdown">
-                <a class="navbar-item">
-                  About
-          </a>
-                <a class="navbar-item">
-                  Jobs
-          </a>
-                <a class="navbar-item">
-                  Contact
-          </a>
-                <hr class="navbar-divider" />
-                <a class="navbar-item">
-                  Report an issue
-          </a>
-              </div>
-            </div>
+            
           </div>
 
           <div class="navbar-end">
@@ -60,12 +52,14 @@ const Navbar = props => {
                   <p>You're logged in.</p> :
                   <Fragment>
                     <div class="buttons">
-                      <a class="button is-primary">
+                    <Link to="/register"><a class="button is-primary">
                         <strong>Sign up</strong>
                       </a>
-                      <a class="button is-light">
+                      </Link>
+                      <Link to="/login">
+                        <a class="button is-light">
                         Log in
-              </a>
+              </a></Link>
                     </div>
                   </Fragment>
               }
