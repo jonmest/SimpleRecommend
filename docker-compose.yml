@@ -1,16 +1,32 @@
 version: '3'
 services:
-    nginx: 
+    reverse-proxy: 
         image: nginx:latest
-        container_name: production_nginx
+        container_name: reverse_proxy_one
+        restart: unless-stopped
+        depends_on:
+            - provider-app
+            - dashboard
         volumes:
-          - ./nginx.conf:/etc/nginx/nginx.conf
+          - ./reverse_proxy/nginx.conf:/etc/nginx/nginx.conf
         ports:
           - 80:80
           - 443:443
         volumes:
-            - ./nginx.conf:/etc/nginx/nginx.conf
-            # - /etc/letsencrypt/:/etc/letsencrypt/
+            - ./project/nginx.conf:/etc/nginx/conf.d
+            - certbot-etc:/etc/letsencrypt
+            - certbot-var:/var/lib/letsencrypt
+    certbot:
+        image: certbot/certbot
+        container_name: certbot
+        volumes:
+            - certbot-etc:/etc/letsencrypt
+            - certbot-var:/var/lib/letsencrypt
+            - web-root:/var/www/html
+        depends_on:
+            - production_nginx
+        command: certonly --webroot --webroot-path=/var/www/html --email simplerecommend@gmail.com --agree-tos --no-eff-email --staging -d simplerecommend.com  -d www.simplerecommend.com -d api.simplerecommend -d app.simplerecommend
+    
     postgres-server:
         image: postgres
         env_file:
@@ -48,3 +64,5 @@ services:
             - ./dashboard/src:/app
 volumes:
     postgres-server-data:
+    certbot-etc:
+        certbot-var:
