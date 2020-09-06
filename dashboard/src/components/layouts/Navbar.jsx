@@ -38,7 +38,7 @@ const Navbar = props => {
             </a>
             
 
-            <a class="navbar-item">
+            <a class="navbar-item" href="https://simplerecommend.readthedocs.io">
               Documentation
             </a>
 
