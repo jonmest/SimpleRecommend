@@ -269,7 +269,7 @@ func RequestVerifyEmail(c *fiber.Ctx) {
 
 	from := mail.NewEmail("SimpleRecommend", "contrarianandfree@gmail.com")
 	subject := "Verify Your Email At SimpleRecommend"
-	to := mail.NewEmail(user.Username, "jonmester3@gmail.com")
+	to := mail.NewEmail(user.Username, user.Email)
 	plainTextContent := "Thank you for signing up to SimpleRecommend. Verify your email to fully access your account now: https://app.simplerecommend.com/verify-email-token/" + tokenString
 	htmlContent := "<div>Thank you for subscribing to the SimpleRecommend service. You need to verify your email to fully access your account. <a href=\"https://app.simplerecommend.com/verify-email-token/" + tokenString + "\">Click here now to verify email</a>. If you haven't recently signed up with SimpleRecommend, disregard this email and we'll stop bothering you.</div>"
 	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
