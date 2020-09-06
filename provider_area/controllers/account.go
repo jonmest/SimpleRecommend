@@ -138,6 +138,7 @@ func CreateAccount(c *fiber.Ctx) {
 		Email:        input.Email,
 		PasswordHash: hash,
 		ApiKey:       apiKey,
+		Hostnames:    "[]",
 	}
 	if err := db.DB.Create(&account).Error; err != nil {
 		fmt.Println(err)
