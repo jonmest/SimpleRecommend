@@ -1,6 +1,6 @@
 version: '3'
 services:
-    reverse-proxy: 
+    nginx: 
         image: nginx:latest
         container_name: reverse_proxy_one
         restart: unless-stopped
@@ -8,46 +8,34 @@ services:
             - provider-app
             - dashboard
         volumes:
-          - ./reverse_proxy/nginx.conf:/etc/nginx/nginx.conf
+            - ./reverse_proxy/nginx.conf:/etc/nginx/nginx.conf
+            - /etc/letsencrypt/:/etc/letsencrypt/
         ports:
-          - 80:80
-          - 443:443
-        volumes:
-            - ./project/nginx.conf:/etc/nginx/conf.d
-            - certbot-etc:/etc/letsencrypt
-            - certbot-var:/var/lib/letsencrypt
-    certbot:
-        image: certbot/certbot
-        container_name: certbot
-        volumes:
-            - certbot-etc:/etc/letsencrypt
-            - certbot-var:/var/lib/letsencrypt
-            - web-root:/var/www/html
-        depends_on:
-            - production_nginx
-        command: certonly --webroot --webroot-path=/var/www/html --email simplerecommend@gmail.com --agree-tos --no-eff-email --staging -d simplerecommend.com  -d www.simplerecommend.com -d api.simplerecommend -d app.simplerecommend
-    
+          - "80:80"
+          - "443:443"
     postgres-server:
         image: postgres
         env_file:
             - database.env
         volumes:
             - postgres-server-data:/var/lib/postgresql/data/
-        ports:
-            - "5432:5432"
+        expose:
+            - "5432"
     redis-server:
         image: redis
         ports:
-            - "6379:6379"
+            - "6379"
     computing-app:
         build: ./computer
         restart: always
         volumes:
             - ./computer/src/app:/home/jon/Desktop/Code/SimpleRecommend/computer
+
     go-app:
         build: ./front_go
         ports:
             - "8080:8080"
+
     provider-app:
         build: ./provider_area
         ports:
@@ -55,7 +43,7 @@ services:
     dashboard:
         build: ./dashboard
         ports:
-            - 3001:3000
+            - "3001:3001"
         stdin_open: true # docker run -i
         tty: true        # docker run -t
         environment:
@@ -64,5 +52,3 @@ services:
             - ./dashboard/src:/app
 volumes:
     postgres-server-data:
-    certbot-etc:
-        certbot-var:
