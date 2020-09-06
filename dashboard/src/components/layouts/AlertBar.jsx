@@ -8,13 +8,20 @@ const AlertBar = () => {
 
     useEffect(() => {
         if (globalState.isAuthenticated) {
-            const { active, domain, max_rating, min_rating } = globalState.client
+            const { active, verified, domain, max_rating, min_rating } = globalState.client
             const newAlerts = {}
             if (!active) {
                 newAlerts["inactive"] = {
                     id: "inactive",
                     type: "danger",
                     message: "Your account is not active. Complete payment if you have not, or wait a few minutes. Contact support if problem persists."
+                }
+            }
+            if (!verified) {
+                newAlerts["notVerified"] = {
+                    id: "notVerified",
+                    type: "danger",
+                    message: "Your email is not verified. Check your inbox or spam bin and click the verification link."
                 }
             }
             if (domain === "") {
