@@ -33,8 +33,13 @@ const Start = ({ state }) => {
             <div class="buttons">
                 {
                     (!Cookies.get('token')) ? <Fragment>
-                        <Link to="/register"><button class="button is-danger">Sign Up Now</button> </Link>
-                        <Link to="/login" style={{marginLeft: "10px"}}><button class="button">Login</button></Link>
+                        <a href="https://mailchi.mp/001e6c8dff9b/sign-up-for-simplerecommend-alfa"><button class="button is-danger">Sign Up For Waiting List Now</button> </a>
+                        {/* <Link to="/register"> */}
+                            <button disabled class="button is-danger">Sign Up Now</button> 
+                            {/* </Link> */}
+                        {/* <Link to="/login" style={{marginLeft: "10px"}}> */}
+                            {/* <button class="button">Login</button> */}
+                            {/* </Link> */}
                     </Fragment> : <Fragment>
                     <Link to="/account"><button class="button is-danger">Go to your account</button> </Link>
                     </Fragment>
