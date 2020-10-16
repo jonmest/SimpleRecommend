@@ -10,24 +10,28 @@ from surprise.model_selection import train_test_split
 from collections import defaultdict
 from operator import itemgetter
 from KNN import KNN_ItemBased
-import datetime  
+import datetime
+
 
 class LoadData:
     def __init__(self, provider_id, cursor):
         print("Loading data from database...")
 
-        cursor.execute('SELECT id FROM actors WHERE provider = %s', (provider_id,))
+        cursor.execute(
+            'SELECT id FROM actors WHERE provider = %s', (provider_id,))
         actors = [r[0] for r in cursor.fetchall()]
 
         # Then build events list from provider
-        cursor.execute("SELECT * FROM events WHERE provider = %s", (provider_id,))
+        cursor.execute(
+            "SELECT * FROM events WHERE provider = %s", (provider_id,))
         events = cursor.fetchall()
         events = convert_to_dict(cursor.description, events)
 
         self.actors = actors
         self.events = events
 
-def compute (body, pool, redis):
+
+def compute(body, pool, redis):
     print("Initiate computation.")
 
     actor_id = body["actor"]
@@ -36,9 +40,10 @@ def compute (body, pool, redis):
     conn = pool.getconn()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT max_rating, min_rating FROM providers WHERE username = %s', (provider_username,))
+    cursor.execute(
+        'SELECT max_rating, min_rating FROM providers WHERE username = %s', (provider_username,))
     (MAX_RATING, MIN_RATING) = cursor.fetchone()
-    
+
     d = LoadData(provider_username, cursor)
 
     # Load dataframe
@@ -47,7 +52,6 @@ def compute (body, pool, redis):
         event_key_actor="actor", event_key_item="item",
         event_key_data="data", MIN_RATING=MIN_RATING, MAX_RATING=MAX_RATING
     )
-    
 
     knn = KNN_ItemBased(ds, d.actors)
     knn.compute_similarities()

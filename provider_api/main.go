@@ -17,10 +17,6 @@ var ctx = context.Background()
 func main() {
 	app := fiber.New()
 	app.Use(cors.New())
-	// app.Use(middleware.Logger(middleware.LoggerConfig{
-	// 	TimeFormat: "15:04:05",
-	// 	Output:     os.Stdout,
-	// }))
 
 	db.ConnectDatabase()
 
