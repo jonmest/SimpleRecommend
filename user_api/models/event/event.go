@@ -1,10 +1,10 @@
-package models
+package event
 
 import "github.com/jinzhu/gorm"
 
 type Event struct {
 	gorm.Model
-	Label     string
+	Label    string
 	Actor    string
 	Item     string
 	Data     float64

@@ -1,14 +1,13 @@
 package db
 
 import (
-	"github.com/go-redis/redis/v8"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"raas.com/api/v1/models"
+	"raas.com/api/v1/models/event"
 )
 
 var DB *gorm.DB
-var RDB *redis.Client
 
 func ConnectDatabase() {
 	// DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
@@ -18,14 +17,7 @@ func ConnectDatabase() {
 		panic(err)
 	}
 
-	database.AutoMigrate(&models.Actor{}, &models.Event{}, &models.Recommendation{})
-
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
+	database.AutoMigrate(&models.Actor{}, &event.Event{}, &models.Recommendation{})
 
 	DB = database
-	RDB = rdb
 }
