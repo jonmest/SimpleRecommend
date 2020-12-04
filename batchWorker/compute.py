@@ -1,16 +1,16 @@
+import json
+import heapq
+import datetime
 import psycopg2
 import psycopg2.extras
-import heapq
-from util import convert_to_dict
-import json
-from Dataset import dataset_from_events
-from surprise import Dataset, Reader
 from surprise import KNNBasic
-from surprise.model_selection import train_test_split
-from collections import defaultdict
-from operator import itemgetter
 from KNN import KNN_ItemBased
-import datetime
+from operator import itemgetter
+from util import convert_to_dict
+from collections import defaultdict
+from surprise import Dataset, Reader
+from Dataset import dataset_from_events
+from surprise.model_selection import train_test_split
 
 
 class LoadData:
@@ -21,7 +21,6 @@ class LoadData:
             'SELECT id FROM actors WHERE provider = %s', (provider_id,))
         actors = [r[0] for r in cursor.fetchall()]
 
-        # Then build events list from provider
         cursor.execute(
             "SELECT * FROM events WHERE provider = %s", (provider_id,))
         events = cursor.fetchall()
@@ -31,7 +30,7 @@ class LoadData:
         self.events = events
 
 
-def compute(body, pool, redis):
+def compute(body, pool):
     print("Initiate computation.")
 
     actor_id = body["actor"]
@@ -77,5 +76,3 @@ def compute(body, pool, redis):
 
     conn.commit()
     cursor.close()
-    # Delete actor's old recommendations from redis
-    redis.delete('recs_{}_{}'.format(provider_username, actor_id))
